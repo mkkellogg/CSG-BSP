@@ -1,8 +1,15 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\CSG-BSP\Scripts\BSP.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\CSG-BSP\Scripts\BSPTree.cs">
     <Files>
-      <File FileName="Assets\CSG-BSP\Scripts\BSP.cs" Line="6" Column="2" />
+      <File FileName="Assets\CSG-BSP\Scripts\BSPTree.cs" Line="63" Column="40" />
+      <File FileName="Assets\CSG-BSP\Scripts\Vector3D.cs" Line="149" Column="2" />
+      <File FileName="Assets\CSG-BSP\Scripts\Vertex.cs" Line="33" Column="4" />
+      <File FileName="Assets\CSG-BSP\Scripts\Polygon.cs" Line="36" Column="28" />
+      <File FileName="Assets\CSG-BSP\Scripts\Plane.cs" Line="23" Column="40" />
+      <File FileName="Assets\CSG-BSP\Scripts\UV.cs" Line="29" Column="4" />
+      <File FileName="Assets\CSG-BSP\Scripts\Color4.cs" Line="37" Column="4" />
+      <File FileName="Assets\CSG-BSP\Scripts\Partitioner.cs" Line="34" Column="3" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

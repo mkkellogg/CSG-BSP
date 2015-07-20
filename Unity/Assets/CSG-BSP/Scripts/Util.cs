@@ -1,7 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class BSP
+namespace CSG
 {
+	public class Util 
+	{
 
+	}
 }

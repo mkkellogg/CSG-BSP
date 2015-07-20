@@ -46,11 +46,15 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\CSG-BSP\Scripts\BSP.cs" />
-     <Compile Include="Assets\CSG-BSP\Scripts\Plane.cs" />
-     <Compile Include="Assets\CSG-BSP\Scripts\Polygon.cs" />
-     <Compile Include="Assets\CSG-BSP\Scripts\Vector3D.cs" />
-     <Compile Include="Assets\CSG-BSP\Scripts\Vertex.cs" />
+     <Compile Include="Assets\CSG-BSP\Scripts\CSG\BSPTree.cs" />
+     <Compile Include="Assets\CSG-BSP\Scripts\CSG\Color4.cs" />
+     <Compile Include="Assets\CSG-BSP\Scripts\CSG\Partitioner.cs" />
+     <Compile Include="Assets\CSG-BSP\Scripts\CSG\Plane.cs" />
+     <Compile Include="Assets\CSG-BSP\Scripts\CSG\Polygon.cs" />
+     <Compile Include="Assets\CSG-BSP\Scripts\CSG\UV.cs" />
+     <Compile Include="Assets\CSG-BSP\Scripts\CSG\Vector3D.cs" />
+     <Compile Include="Assets\CSG-BSP\Scripts\CSG\Vertex.cs" />
+     <Compile Include="Assets\CSG-BSP\Scripts\Util.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>
