@@ -10,40 +10,71 @@ namespace CSG
 
 		public BSPTree()
 		{
-			root = null;
+
 		}
 
-		public void Build(List<Polygon> polygons)
+		public void AddTriangles(List<Triangle> triangles)
 		{
-			root = Node.BuildTree(polygons);
+			if (triangles == null || triangles.Count <= 0) return;
+		
+			if(root == null)
+			{
+				root = Node.Create(triangles[0].OrientationPlane);
+			}
+
+			AddTriangles(root, triangles);
 		}
 
-		public void ClipOutPolygons(List<Polygon> polygons)
+		private void AddTriangles(Node node, List<Triangle> triangles)
 		{
-			ClipOutPolygons (root, polygons);
+			if (triangles == null || triangles.Count <= 0)return;
+
+			List<Triangle> nodeTriangles =  node.GetTriangleList();
+			
+			List<Triangle> lessThan = new List<Triangle> ();
+			List<Triangle> greaterThan = new List<Triangle> ();
+			List<Triangle> coPlanar = new List<Triangle> ();
+			
+			for (int i = 0; i < triangles.Count; i++) 
+			{
+				Partitioner.Orientation orient = Partitioner.SliceTriangle(triangles[i], node.SplitPlane, lessThan, greaterThan, coPlanar, coPlanar);
+			}
+
+			nodeTriangles.AddRange(coPlanar);
+			
+			if(lessThan.Count > 0 && node.LessThan == null)node.LessThan = Node.Create(lessThan[0].OrientationPlane);
+			AddTriangles(node.LessThan, lessThan);
+			
+			if(greaterThan.Count > 0 && node.GreaterThan == null)node.GreaterThan = Node.Create(greaterThan[0].OrientationPlane);
+			AddTriangles(node.GreaterThan, greaterThan);
 		}
 
-		private void ClipOutPolygons(Node node, List<Polygon> polygons)
+		public void ClipOutTriangles(List<Triangle> triangles)
+		{
+			ClipOutTriangles (root, triangles);
+		}
+
+		private void ClipOutTriangles(Node node, List<Triangle> triangles)
 		{
 			if(node == null)return;
 
-			List<Polygon> lessThan = new List<Polygon>();
-			List<Polygon> greaterThan = new List<Polygon>();
+			List<Triangle> lessThan = new List<Triangle>();
+			List<Triangle> greaterThan = new List<Triangle>();
 
-			for (int i = 0; i < polygons.Count; i++) 
+			for (int i = 0; i < triangles.Count; i++) 
 			{
-				Partitioner.SlicePolygon(polygons[i], node.SplitPlane, lessThan, greaterThan, lessThan, greaterThan);
+				Partitioner.Orientation orient = Partitioner.SliceTriangle(triangles[i], node.SplitPlane, lessThan, greaterThan, lessThan, greaterThan);
 			}
 
 			if(node.LessThan != null)
-				ClipOutPolygons (node.LessThan, lessThan);
+				ClipOutTriangles (node.LessThan, lessThan);
 			else 
 				lessThan.Clear();
-			ClipOutPolygons (node.GreaterThan, greaterThan);
+			ClipOutTriangles (node.GreaterThan, greaterThan);
 
-			polygons.Clear ();
-			polygons.AddRange (lessThan);
-			polygons.AddRange (greaterThan);
+			triangles.Clear ();
+			triangles.AddRange (lessThan);
+			triangles.AddRange (greaterThan);
 		}
 
 		public void ClipByTree(BSPTree tree) 
@@ -55,28 +86,29 @@ namespace CSG
 		{
 			if(node == null)return;
 
-			tree.ClipOutPolygons (node.GetPolygonList());
+			tree.ClipOutTriangles (node.GetTriangleList());
 			ClipByTree (node.LessThan, tree);
 			ClipByTree (node.GreaterThan, tree);
 		}
 
-		public List<Polygon> GetAllPolygons()
+		public List<Triangle> GetAllTriangles()
 		{
-			List<Polygon> allPolys = new List<Polygon> ();
-			GetAllPolygons (root, allPolys);
-			return allPolys;
+			List<Triangle> allTriangles = new List<Triangle> ();
+			GetAllTriangles (root, allTriangles);
+			return allTriangles;
 		}
 
-		private void GetAllPolygons(Node node, List<Polygon> polygons)
+		private void GetAllTriangles(Node node, List<Triangle> triangles)
 		{
 			if(node == null)return;
 
-			for(int i = 0; i < node.PolygonCount(); i++)
+			for(int i = 0; i < node.TriangleCount(); i++)
 			{
-				polygons.Add(node.GetPolygon(i));
+				triangles.Add(node.GetTriangle(i));
 			}
-			GetAllPolygons(node.LessThan, polygons);
-			GetAllPolygons(node.GreaterThan, polygons);
+
+			GetAllTriangles(node.LessThan, triangles);
+			GetAllTriangles(node.GreaterThan, triangles);
 		}
 
 		public void Invert()
@@ -93,50 +125,79 @@ namespace CSG
 			Invert (node.GreaterThan);
 		}
 
+		public BSPTree Clone()
+		{
+			BSPTree copy = new BSPTree();
+			copy.root = Clone(root);
+			return copy;
+		}
+
+		private Node Clone(Node node)
+		{
+			if(node == null) return null;
+			Node copy = node.Clone();
+			copy.LessThan = Clone(node.LessThan);
+			copy.GreaterThan = Clone(node.GreaterThan);
+			return copy;
+		}
+
+		private static List<Triangle> CloneTriangles(List<Triangle> triangles)
+		{
+			if(triangles == null) return null;
+
+			List<Triangle> clones = new List<Triangle>();
+			for(int i = 0; i < triangles.Count; i++)
+			{
+				clones.Add(triangles[i].Clone());
+			}
+
+			return clones;
+		}
+
 		private class Node
 		{
 			public Plane SplitPlane;
 			public Node LessThan;
 			public Node GreaterThan;
 
-			private List<Polygon> polygons;
+			private List<Triangle> triangles;
 
-			public Node()
+			public static Node Create(Plane splitPlane)
+			{
+				Node newNode = new Node();
+				newNode.SplitPlane = splitPlane;
+				return newNode;
+			}
+
+			private Node()
 			{
 				LessThan = null;
 				GreaterThan = null;
-				polygons = new List<Polygon>();
+				triangles = new List<Triangle>();
 			}
 
-			public static Node BuildTree(List<Polygon> polygons)
+			public Node Clone()
 			{
-				if (polygons == null || polygons.Count <= 0) return null;
+				Node copy = new Node();
 
-				Node node = new Node ();
+				copy.SplitPlane = SplitPlane;
 
-				node.SplitPlane = polygons[0].Plane;
-
-				List<Polygon> lessThan = new List<Polygon> ();
-				List<Polygon> greaterThan = new List<Polygon> ();
-
-				for (int i = 0; i < polygons.Count; i++) 
+				for(int i = 0; i < triangles.Count; i++)
 				{
-					Partitioner.SlicePolygon(polygons[i], node.SplitPlane, lessThan, greaterThan, node.polygons, node.polygons);
+					copy.triangles.Add(triangles[i].Clone());
 				}
 
-				node.LessThan = BuildTree(lessThan);
-				node.GreaterThan = BuildTree(greaterThan);
+				copy.LessThan = LessThan;
+				copy.GreaterThan = GreaterThan;
 
-				return node;
+				return copy;
 			}
 
 			public void Invert()
 			{
-				for (int i = 0; i < polygons.Count; i++) 
+				for (int i = 0; i < triangles.Count; i++) 
 				{
-					Polygon poly = polygons[i];
-					poly.Flip();
-					polygons[i] = poly;
+					triangles[i].Flip();
 				}
 
 				SplitPlane.Flip ();
@@ -146,25 +207,27 @@ namespace CSG
 				GreaterThan = tempList;
 			}
 
-			public int PolygonCount()
+			public int TriangleCount()
 			{
-				if(polygons != null)return polygons.Count;
-				else return 0;
+				if(triangles != null)
+					return triangles.Count;
+				else 
+					return 0;
 			}
 
-			public Polygon GetPolygon(int index)
+			public Triangle GetTriangle(int index)
 			{
-				if(polygons == null || index < 0 || index >= polygons.Count)
+				if(triangles == null || index < 0 || index >= triangles.Count)
 				{
-					throw new System.IndexOutOfRangeException("Invalid polygon index.");
+					throw new System.IndexOutOfRangeException("Invalid triangle index.");
 				}
 
-				return polygons [index];
+				return triangles [index];
 			}
 
-			public List<Polygon> GetPolygonList()
+			public List<Triangle> GetTriangleList()
 			{
-				return polygons;
+				return triangles;
 			}
 		}
 	}

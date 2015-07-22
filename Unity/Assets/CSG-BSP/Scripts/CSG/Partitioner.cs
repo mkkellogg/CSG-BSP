@@ -14,81 +14,75 @@ namespace CSG
 			}
 		}
 
-		private const float SplitEpsilon = 0.00001f;
-
-		private enum VertexOrientation
+		public enum Orientation
 		{
-			CoPlanar = 0,
-			GreaterThan = 1,
-			LessThan = 2
-		}
-
-		private enum PolygonOrientation
-			{
 			CoPlanar = 0,
 			LessThan = 1,
 			GreaterThan = 2,
 			Spanning = 4
 		}
 
-		public static void SlicePolygon(Polygon polygon, Plane plane, 
-		                                List<Polygon> lessThan, List<Polygon> greaterThan, 
-		                                List<Polygon> lessThanPlanar, List<Polygon> greaterThanPlanar)
-		{
-			if(polygon.VertexCount() < 3)throw new PartitionException("All polygons must have at least 3 vertices!");
+		private const float SplitEpsilon = 0.00001f;
 
-			VertexOrientation[] vertOrientations = new VertexOrientation[polygon.VertexCount()];
-			PolygonOrientation polyOrientation = PolygonOrientation.CoPlanar;
+		public static Orientation SliceTriangle(Triangle triangle, Plane plane, 
+		                                List<Triangle> lessThan, List<Triangle> greaterThan, 
+		                                List<Triangle> lessThanPlanar, List<Triangle> greaterThanPlanar)
+		{
+			Orientation[] vertOrientations = new Orientation[3];
+			Orientation triOrientation = Orientation.CoPlanar;
 			int orientationsFound = 0;
 
-			for(int i=0; i < polygon.VertexCount(); i++)
+			for(int i =0; i < 3; i++)
 			{
-				VertexOrientation currentOrientation =  ClassifyVertexOrientation(polygon.GetVertex(i), plane);
+				Orientation currentOrientation =  ClassifyVertexOrientation(triangle.GetVertexByIndex(i), plane);
 				vertOrientations[i] = currentOrientation;
 				orientationsFound |= (int)currentOrientation;
 			}
 
-			if (orientationsFound > (int)PolygonOrientation.GreaterThan)
-				polyOrientation = PolygonOrientation.Spanning;
+			if (orientationsFound > (int)Orientation.GreaterThan)
+				triOrientation = Orientation.Spanning;
 			else
-				polyOrientation = (PolygonOrientation)orientationsFound;
+				triOrientation = (Orientation)orientationsFound;
 
-			switch(polyOrientation)
+			switch(triOrientation)
 			{
-				case PolygonOrientation.CoPlanar:
-					float planePolyOrientation = polygon.Plane.Normal.Dot(plane.Normal);
-					if(planePolyOrientation > 0)greaterThanPlanar.Add(polygon);
-					else lessThanPlanar.Add(polygon);
+				case Orientation.CoPlanar:
+					
+					float planeTriOrientation = triangle.OrientationPlane.Normal.Dot(plane.Normal);
+					if(planeTriOrientation > 0)
+						greaterThanPlanar.Add(triangle);
+					else 
+						lessThanPlanar.Add(triangle);
 				break;
-				case PolygonOrientation.LessThan:
-					lessThan.Add(polygon);
+				case Orientation.LessThan:
+					lessThan.Add(triangle);
 				break;
-				case PolygonOrientation.GreaterThan:
-					greaterThan.Add(polygon);
+				case Orientation.GreaterThan:
+					greaterThan.Add(triangle);
 				break;
-				case PolygonOrientation.Spanning:
+				case Orientation.Spanning:
 					List<Vertex> ltSpanning = new List<Vertex>();
 					List<Vertex> gtSpanning = new List<Vertex>();
 
-					for(int i=0; i < polygon.VertexCount(); i++)
+					for(int i=0; i < 3; i++)
 					{
 						int currentIndex = i;
-						int nextIndex = currentIndex < polygon.VertexCount() - 1 ? currentIndex + 1 : 0;
+						int nextIndex = currentIndex < 2 ? currentIndex + 1 : 0;
 
-						VertexOrientation currentOrientation = vertOrientations[currentIndex];
-						VertexOrientation nextOrientation = vertOrientations[nextIndex];
+						Orientation currentOrientation = vertOrientations[currentIndex];
+						Orientation nextOrientation = vertOrientations[nextIndex];
 
-						Vertex currentVertex = polygon.GetVertex(currentIndex);
-						Vertex nextVertex = polygon.GetVertex(nextIndex);
+						Vertex currentVertex = triangle.GetVertexByIndex(currentIndex);
+						Vertex nextVertex = triangle.GetVertexByIndex(nextIndex); 
 
 						Vector3D currentEdge = nextVertex.Position.SubtractedBy(currentVertex.Position);
 
-						if(currentOrientation != VertexOrientation.LessThan)gtSpanning.Add(currentVertex);
-						if(currentOrientation != VertexOrientation.GreaterThan)ltSpanning.Add(currentVertex);
+						if(currentOrientation != Orientation.LessThan)gtSpanning.Add(currentVertex);
+						if(currentOrientation != Orientation.GreaterThan)ltSpanning.Add(currentVertex);
 
 						if(currentOrientation != nextOrientation &&
-						   currentOrientation != VertexOrientation.CoPlanar && 
-					       nextOrientation != VertexOrientation.CoPlanar)
+					  	   currentOrientation != Orientation.CoPlanar && 
+					  	   nextOrientation != Orientation.CoPlanar)
 						{
 							float splitPortion = plane.D - plane.Normal.Dot(currentVertex.Position);
 							float fullPortion = plane.Normal.Dot(currentEdge);
@@ -102,28 +96,31 @@ namespace CSG
 
 					if (ltSpanning.Count >= 3) 
 					{
-						Plane polyPlane = Plane.BuildFromVertices(ltSpanning[0].Position, ltSpanning[1].Position, ltSpanning[2].Position);
-						lessThan.Add(new Polygon(ltSpanning, polyPlane));
+						lessThan.Add(new Triangle(ltSpanning[0], ltSpanning[1], ltSpanning[2]));
+						if(ltSpanning.Count >= 4)lessThan.Add(new Triangle(ltSpanning[1], ltSpanning[2], ltSpanning[3]));
 					}
 
 					if (gtSpanning.Count >= 3) 
 					{
-						Plane polyPlane = Plane.BuildFromVertices(gtSpanning[0].Position, gtSpanning[1].Position, gtSpanning[2].Position);
-						greaterThan.Add(new Polygon(gtSpanning, polyPlane));
+						greaterThan.Add(new Triangle(gtSpanning[0], gtSpanning[1], gtSpanning[2]));
+						if(gtSpanning.Count >= 4)greaterThan.Add(new Triangle(gtSpanning[1], gtSpanning[2], gtSpanning[3]));
 					}
 				break;
 			}
+
+			return triOrientation;
 		}
 
-		private static VertexOrientation ClassifyVertexOrientation(Vertex vertex, Plane plane)
+		private static Orientation ClassifyVertexOrientation(Vertex vertex, Plane plane)
 		{
 			float diff = plane.Normal.Dot(vertex.Position) - plane.D;
+
 			if(diff < -SplitEpsilon)
-				return VertexOrientation.LessThan;
+				return Orientation.LessThan;
 			else if(diff > SplitEpsilon)
-				return VertexOrientation.GreaterThan;
+				return Orientation.GreaterThan;
 			else
-				return VertexOrientation.CoPlanar;
+				return Orientation.CoPlanar;
 		}
 	}
 }

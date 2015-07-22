@@ -7,7 +7,7 @@ namespace CSG
 	{
 		public Vector3D Position;
 		public Vector3D Normal;
-		public Vector3D Tangent;
+		public Vector4D Tangent;
 		public UV UV1;
 		public UV UV2;
 		public Color4 Color;
@@ -22,7 +22,7 @@ namespace CSG
 			Color = vertex.Color;
 		}
 
-		public Vertex(Vector3D position, Vector3D normal, Vector3D tangent, UV uv1, UV uv2, Color4 color)
+		public Vertex(Vector3D position, Vector3D normal, Vector4D tangent, UV uv1, UV uv2, Color4 color)
 		{
 			Position = position;
 			Normal = normal;

@@ -25,7 +25,10 @@ namespace CSG
 			Plane p = new Plane ();
 			Vector3D edgeA = c.SubtractedBy (a);
 			Vector3D edgeB = b.SubtractedBy (a);
-			p.Normal = edgeA.Cross (edgeB).Normalized();
+		
+			Vector3D cross = edgeA.Cross (edgeB);
+			p.Normal = cross.Normalized();
+
 			p.D = p.Normal.Dot (a);
 			return p;
 		}

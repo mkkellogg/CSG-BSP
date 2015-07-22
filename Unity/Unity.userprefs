@@ -1,15 +1,17 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\CSG-BSP\Scripts\BSPTree.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\CSG-BSP\Scripts\CSG\BSPTree.cs">
     <Files>
-      <File FileName="Assets\CSG-BSP\Scripts\BSPTree.cs" Line="63" Column="40" />
-      <File FileName="Assets\CSG-BSP\Scripts\Vector3D.cs" Line="149" Column="2" />
-      <File FileName="Assets\CSG-BSP\Scripts\Vertex.cs" Line="33" Column="4" />
-      <File FileName="Assets\CSG-BSP\Scripts\Polygon.cs" Line="36" Column="28" />
-      <File FileName="Assets\CSG-BSP\Scripts\Plane.cs" Line="23" Column="40" />
-      <File FileName="Assets\CSG-BSP\Scripts\UV.cs" Line="29" Column="4" />
-      <File FileName="Assets\CSG-BSP\Scripts\Color4.cs" Line="37" Column="4" />
-      <File FileName="Assets\CSG-BSP\Scripts\Partitioner.cs" Line="34" Column="3" />
+      <File FileName="Assets\CSG-BSP\Scripts\CSGUtil.cs" Line="152" Column="51" />
+      <File FileName="Assets\CSG-BSP\Scripts\CSG\BSPTree.cs" Line="31" Column="1" />
+      <File FileName="Assets\CSG-BSP\Scripts\CSG\Triangle.cs" Line="9" Column="11" />
+      <File FileName="Assets\CSG-BSP\Scripts\CSG\Plane.cs" Line="8" Column="16" />
+      <File FileName="Assets\CSG-BSP\Scripts\CSG\Vertex.cs" Line="25" Column="61" />
+      <File FileName="Assets\CSG-BSP\Scripts\CSG\Partitioner.cs" Line="55" Column="36" />
+      <File FileName="Assets\CSG-BSP\Scripts\CSG\BSPOperations.cs" Line="14" Column="18" />
+      <File FileName="Assets\CSG-BSP\Scripts\CSG\Vector3D.cs" Line="6" Column="2" />
+      <File FileName="Assets\CSG-BSP\Scripts\CSG\Vector4D.cs" Line="21" Column="27" />
+      <File FileName="Assets\CSG-BSP\Scripts\Tests\BasicTest.cs" Line="23" Column="65" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

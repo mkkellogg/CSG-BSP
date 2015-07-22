@@ -115,7 +115,7 @@ namespace CSG
 		{
 			Vector3D subtracted = new Vector3D (this);
 			subtracted.Subtract (b);
-			return b;
+			return subtracted;
 		}
 
 		public void Add(Vector3D b)
@@ -129,7 +129,7 @@ namespace CSG
 		{
 			Vector3D added = new Vector3D (this);
 			added.Add (b);
-			return b;
+			return added;
 		}
 
 		public void MultiplyBy(float factor)
