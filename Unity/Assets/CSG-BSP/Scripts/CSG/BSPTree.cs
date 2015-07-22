@@ -28,25 +28,31 @@ namespace CSG
 		private void AddTriangles(Node node, List<Triangle> triangles)
 		{
 			if (triangles == null || triangles.Count <= 0)return;
+			if(node == null)return;
 
 			List<Triangle> nodeTriangles =  node.GetTriangleList();
 			
 			List<Triangle> lessThan = new List<Triangle> ();
 			List<Triangle> greaterThan = new List<Triangle> ();
-			List<Triangle> coPlanar = new List<Triangle> ();
 			
 			for (int i = 0; i < triangles.Count; i++) 
 			{
-				Partitioner.Orientation orient = Partitioner.SliceTriangle(triangles[i], node.SplitPlane, lessThan, greaterThan, coPlanar, coPlanar);
+				Partitioner.Orientation orient = Partitioner.SliceTriangle(triangles[i], node.SplitPlane, lessThan, greaterThan, nodeTriangles, nodeTriangles);
 			}
-
-			nodeTriangles.AddRange(coPlanar);
 			
-			if(lessThan.Count > 0 && node.LessThan == null)node.LessThan = Node.Create(lessThan[0].OrientationPlane);
-			AddTriangles(node.LessThan, lessThan);
+			if(lessThan.Count > 0)
+			{
+				if(node.LessThan == null)
+					node.LessThan = Node.Create(lessThan[0].OrientationPlane);
+				AddTriangles(node.LessThan, lessThan);
+			}
 			
-			if(greaterThan.Count > 0 && node.GreaterThan == null)node.GreaterThan = Node.Create(greaterThan[0].OrientationPlane);
-			AddTriangles(node.GreaterThan, greaterThan);
+			if(greaterThan.Count > 0)
+			{
+				if( node.GreaterThan == null)
+					node.GreaterThan = Node.Create(greaterThan[0].OrientationPlane);
+				AddTriangles(node.GreaterThan, greaterThan);
+			}
 		}
 
 		public void ClipOutTriangles(List<Triangle> triangles)
@@ -56,6 +62,7 @@ namespace CSG
 
 		private void ClipOutTriangles(Node node, List<Triangle> triangles)
 		{
+			if (triangles == null || triangles.Count <= 0)return;
 			if(node == null)return;
 
 			List<Triangle> lessThan = new List<Triangle>();
@@ -197,7 +204,9 @@ namespace CSG
 			{
 				for (int i = 0; i < triangles.Count; i++) 
 				{
-					triangles[i].Flip();
+					Triangle tri = triangles[i];
+					tri.Flip();
+					triangles[i] = tri;
 				}
 
 				SplitPlane.Flip ();

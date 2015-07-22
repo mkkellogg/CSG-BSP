@@ -39,10 +39,15 @@ namespace CSG
 			A.Flip();
 			B.Flip();
 			C.Flip();
+
+			Vertex temp = A;
+			A = C;
+			C = temp;
 		}
 
 		public Vertex GetVertexByIndex(int index)
 		{
+			Vertex r;
 			switch(index)
 			{
 			case 1:
@@ -55,6 +60,7 @@ namespace CSG
 				return A;
 				break;
 			}
+			return r;
 		}
 
 		public void SetVertexByIndex(int index, Vertex vertex)

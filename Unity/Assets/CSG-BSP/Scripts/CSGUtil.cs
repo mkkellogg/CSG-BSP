@@ -23,6 +23,15 @@ namespace CSG
 			mesh.normals = normals;
 			mesh.tangents = tangents;
 
+			int[] triangles = new int[allTriangles.Count * 3];
+			for(int i=0; i < vertices.Length; i++)
+			{
+				triangles[i] = i;
+			}
+			mesh.triangles = triangles;
+
+			mesh.RecalculateNormals();
+
 			return mesh;
 		}
 
@@ -94,15 +103,15 @@ namespace CSG
 
 		public static Vertex TransformVertex(Vertex vertex, Matrix4x4 transform)
 		{
-			Vector3 uVector = new Vector3(vertex.Position.X, vertex.Position.Y, vertex.Position.Z);
+			Vector4 uVector = new Vector4(vertex.Position.X, vertex.Position.Y, vertex.Position.Z, 1);
 			uVector = transform * uVector;
 			vertex.Position = new Vector3D(uVector.x, uVector.y, uVector.z);
-
-			uVector = new Vector3(vertex.Normal.X, vertex.Normal.Y, vertex.Normal.Z);
+			
+			uVector = new Vector4(vertex.Normal.X, vertex.Normal.Y, vertex.Normal.Z, 0);
 			uVector = transform * uVector;
 			vertex.Normal = new Vector3D(uVector.x, uVector.y, uVector.z);
 
-			Vector4 tVector = new Vector4(vertex.Tangent.X, vertex.Tangent.Y, vertex.Tangent.Z, vertex.Tangent.W);
+			Vector4 tVector = new Vector4(vertex.Tangent.X, vertex.Tangent.Y, vertex.Tangent.Z, 0);
 			tVector = transform * tVector;
 			vertex.Tangent = new Vector4D(tVector.x, tVector.y, tVector.z, tVector.w);
 

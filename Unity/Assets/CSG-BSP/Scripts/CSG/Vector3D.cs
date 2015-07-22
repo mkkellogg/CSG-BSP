@@ -56,9 +56,10 @@ namespace CSG
 
 		public static Vector3D Cross(Vector3D a, Vector3D b)
 		{
-			return new Vector3D(a.Y * b.Z - a.Z * b.Y,
-								a.Z * b.X - a.X * b.Z,
-								a.X * b.Y - a.Y * b.X);
+			Vector3D cross = new Vector3D(a.Y * b.Z - a.Z * b.Y,
+                                       a.Z * b.X - a.X * b.Z,
+                                       a.X * b.Y - a.Y * b.X);
+			return cross;
 		}
 		
 		public Vector3D Cross(Vector3D b)

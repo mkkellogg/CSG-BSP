@@ -25,8 +25,11 @@ namespace CSG
 			Plane p = new Plane ();
 			Vector3D edgeA = c.SubtractedBy (a);
 			Vector3D edgeB = b.SubtractedBy (a);
-		
+					
 			Vector3D cross = edgeA.Cross (edgeB);
+			// !! Important: inverted to be valid in left-handed space
+			// TODO: make this work in either handed-ness automatically
+			cross.Invert();
 			p.Normal = cross.Normalized();
 
 			p.D = p.Normal.Dot (a);
