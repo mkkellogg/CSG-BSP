@@ -26,11 +26,6 @@ namespace CSG
 			B = polygon.B;
 			C = polygon.C;
 		}
-	
-		public Triangle Clone()
-		{
-			return new Triangle(this);
-		}
 
 		public void Flip()
 		{

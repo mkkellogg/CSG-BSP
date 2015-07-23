@@ -37,26 +37,19 @@ namespace CSG
 			if (allTriangles == null)return;
 			if(node == null)return;
 
-			List<Triangle> nodeTriangles =  node.GetTriangleList();
-			
+			FastLinkedList<Triangle> nodeTriangles =  node.GetTriangleList();			
 			FastLinkedList<Triangle> lessThan = new FastLinkedList<Triangle> ();
 			FastLinkedList<Triangle> greaterThan = new FastLinkedList<Triangle> ();
-			FastLinkedList<Triangle> addToNode = new FastLinkedList<Triangle> ();
 
 			FastLinkedList<Triangle>.Node current = allTriangles.First;
 			while(current != null)
 			{
-				Partitioner.Orientation orient = Partitioner.SliceTriangle(current.Value, node.SplitPlane, lessThan, greaterThan, addToNode, addToNode);
+				Partitioner.Orientation orient = Partitioner.SliceTriangle(current.Value, node.SplitPlane, lessThan, greaterThan, nodeTriangles, nodeTriangles);
 				current = current.Next;
 			}	
-
-			current = addToNode.First;
-			while(current != null)
-			{
-				nodeTriangles.Add(current.Value);
-				current = current.Next;
-			}
 				
+			allTriangles.Clear();
+
 			if(lessThan.First != null)
 			{
 				if(node.LessThan == null)
@@ -72,24 +65,9 @@ namespace CSG
 			}
 		}
 
-		public void ClipOutTriangles(List<Triangle> triangles)
+		public void ClipOutTriangles(FastLinkedList<Triangle> triangles)
 		{
-			FastLinkedList<Triangle> linkedTriangles = new FastLinkedList<Triangle>();
-			var enumerator = triangles.GetEnumerator();
-			while(enumerator.MoveNext())
-			{
-				linkedTriangles.AddLast(enumerator.Current);
-			}
-
-			ClipOutTriangles (root, linkedTriangles);
-
-			triangles.Clear();
-			FastLinkedList<Triangle>.Node current = linkedTriangles.First;
-			while(current != null)
-			{
-				triangles.Add(current.Value);
-				current = current.Next;
-			}
+			ClipOutTriangles (root, triangles);
 		}
 		
 		private void ClipOutTriangles(Node node, FastLinkedList<Triangle> triangles)
@@ -115,8 +93,8 @@ namespace CSG
 				lessThan.Clear();
 			ClipOutTriangles (node.GreaterThan, greaterThan);			
 
-			triangles.AppendList(lessThan);
-			triangles.AppendList(greaterThan);
+			triangles.AppendIntoList(lessThan);
+			triangles.AppendIntoList(greaterThan);
 		}
 
 		public void ClipByTree(BSPTree tree) 
@@ -144,9 +122,11 @@ namespace CSG
 		{
 			if(node == null)return;
 
-			for(int i = 0; i < node.TriangleCount(); i++)
+			FastLinkedList<Triangle>.Node current = node.GetTriangleList().First;
+			while(current != null)
 			{
-				triangles.Add(node.GetTriangle(i));
+				triangles.Add(current.Value);
+				current = current.Next;
 			}
 
 			GetAllTriangles(node.LessThan, triangles);
@@ -183,26 +163,13 @@ namespace CSG
 			return copy;
 		}
 
-		private static List<Triangle> CloneTriangles(List<Triangle> triangles)
-		{
-			if(triangles == null) return null;
-
-			List<Triangle> clones = new List<Triangle>();
-			for(int i = 0; i < triangles.Count; i++)
-			{
-				clones.Add(triangles[i].Clone());
-			}
-
-			return clones;
-		}
-
 		private class Node
 		{
 			public Plane SplitPlane;
 			public Node LessThan;
 			public Node GreaterThan;
 
-			private List<Triangle> triangles;
+			private FastLinkedList<Triangle> triangles;
 
 			public static Node Create(Plane splitPlane)
 			{
@@ -215,7 +182,7 @@ namespace CSG
 			{
 				LessThan = null;
 				GreaterThan = null;
-				triangles = new List<Triangle>();
+				triangles = new FastLinkedList<Triangle>();
 			}
 
 			public Node Clone()
@@ -224,9 +191,11 @@ namespace CSG
 
 				copy.SplitPlane = SplitPlane;
 
-				for(int i = 0; i < triangles.Count; i++)
+				FastLinkedList<Triangle>.Node current = triangles.First;
+				while(current != null)
 				{
-					copy.triangles.Add(triangles[i].Clone());
+					copy.triangles.AddLast(current.Value);
+					current = current.Next;
 				}
 
 				copy.LessThan = LessThan;
@@ -237,13 +206,13 @@ namespace CSG
 
 			public void Invert()
 			{
-				for (int i = 0; i < triangles.Count; i++) 
+				FastLinkedList<Triangle>.Node current = triangles.First;
+				while(current != null)
 				{
-					Triangle tri = triangles[i];
-					tri.Flip();
-					triangles[i] = tri;
+					current.Value.Flip();
+					current = current.Next;
 				}
-
+				
 				SplitPlane.Flip ();
 
 				Node tempList = LessThan;
@@ -251,25 +220,7 @@ namespace CSG
 				GreaterThan = tempList;
 			}
 
-			public int TriangleCount()
-			{
-				if(triangles != null)
-					return triangles.Count;
-				else 
-					return 0;
-			}
-
-			public Triangle GetTriangle(int index)
-			{
-				if(triangles == null || index < 0 || index >= triangles.Count)
-				{
-					throw new System.IndexOutOfRangeException("Invalid triangle index.");
-				}
-
-				return triangles [index];
-			}
-
-			public List<Triangle> GetTriangleList()
+			public FastLinkedList<Triangle> GetTriangleList()
 			{
 				return triangles;
 			}

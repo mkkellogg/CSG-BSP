@@ -42,7 +42,7 @@ namespace CSG
 			return newNode;
 		}
 
-		public void AppendList(FastLinkedList<T> list)
+		public void AppendIntoList(FastLinkedList<T> list)
 		{
 			if(list == null)return;
 			if(list._First == null)return;

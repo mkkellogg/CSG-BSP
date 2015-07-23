@@ -21,21 +21,5 @@ namespace CSG
 
 			return aClone;
 		}
-
-		/*
-	subtract: function(csg) {
-			var a = new CSG.Node(this.clone().polygons);
-			var b = new CSG.Node(csg.clone().polygons);
-			a.invert();
-			a.clipTo(b);
-			b.clipTo(a);
-			b.invert();
-			b.clipTo(a);
-			b.invert();
-			a.build(b.allPolygons());
-			a.invert();
-			return CSG.fromPolygons(a.allPolygons());
-		},*/
-
 	}
 }
