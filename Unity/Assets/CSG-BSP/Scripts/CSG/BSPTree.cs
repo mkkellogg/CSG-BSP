@@ -22,66 +22,101 @@ namespace CSG
 				root = Node.Create(triangles[0].OrientationPlane);
 			}
 
-			AddTriangles(root, triangles);
+			FastLinkedList<Triangle> linkedTriangles = new FastLinkedList<Triangle>();
+			var enumerator = triangles.GetEnumerator();
+			while(enumerator.MoveNext())
+			{
+				linkedTriangles.AddLast(enumerator.Current);
+			}
+
+			AddTriangles(root, linkedTriangles);
 		}
 
-		private void AddTriangles(Node node, List<Triangle> triangles)
+		private void AddTriangles(Node node, FastLinkedList<Triangle> allTriangles)
 		{
-			if (triangles == null || triangles.Count <= 0)return;
+			if (allTriangles == null)return;
 			if(node == null)return;
 
 			List<Triangle> nodeTriangles =  node.GetTriangleList();
 			
-			List<Triangle> lessThan = new List<Triangle> ();
-			List<Triangle> greaterThan = new List<Triangle> ();
-			
-			for (int i = 0; i < triangles.Count; i++) 
+			FastLinkedList<Triangle> lessThan = new FastLinkedList<Triangle> ();
+			FastLinkedList<Triangle> greaterThan = new FastLinkedList<Triangle> ();
+			FastLinkedList<Triangle> addToNode = new FastLinkedList<Triangle> ();
+
+			FastLinkedList<Triangle>.Node current = allTriangles.First;
+			while(current != null)
 			{
-				Partitioner.Orientation orient = Partitioner.SliceTriangle(triangles[i], node.SplitPlane, lessThan, greaterThan, nodeTriangles, nodeTriangles);
+				Partitioner.Orientation orient = Partitioner.SliceTriangle(current.Value, node.SplitPlane, lessThan, greaterThan, addToNode, addToNode);
+				current = current.Next;
+			}	
+
+			current = addToNode.First;
+			while(current != null)
+			{
+				nodeTriangles.Add(current.Value);
+				current = current.Next;
 			}
-			
-			if(lessThan.Count > 0)
+				
+			if(lessThan.First != null)
 			{
 				if(node.LessThan == null)
-					node.LessThan = Node.Create(lessThan[0].OrientationPlane);
+					node.LessThan = Node.Create(lessThan.First.Value.OrientationPlane);
 				AddTriangles(node.LessThan, lessThan);
 			}
-			
-			if(greaterThan.Count > 0)
+
+			if(greaterThan.First != null)
 			{
 				if( node.GreaterThan == null)
-					node.GreaterThan = Node.Create(greaterThan[0].OrientationPlane);
-				AddTriangles(node.GreaterThan, greaterThan);
+					node.GreaterThan = Node.Create(greaterThan.First.Value.OrientationPlane);
+				AddTriangles(node.GreaterThan,  greaterThan);
 			}
 		}
 
 		public void ClipOutTriangles(List<Triangle> triangles)
 		{
-			ClipOutTriangles (root, triangles);
-		}
-
-		private void ClipOutTriangles(Node node, List<Triangle> triangles)
-		{
-			if (triangles == null || triangles.Count <= 0)return;
-			if(node == null)return;
-
-			List<Triangle> lessThan = new List<Triangle>();
-			List<Triangle> greaterThan = new List<Triangle>();
-
-			for (int i = 0; i < triangles.Count; i++) 
+			FastLinkedList<Triangle> linkedTriangles = new FastLinkedList<Triangle>();
+			var enumerator = triangles.GetEnumerator();
+			while(enumerator.MoveNext())
 			{
-				Partitioner.Orientation orient = Partitioner.SliceTriangle(triangles[i], node.SplitPlane, lessThan, greaterThan, lessThan, greaterThan);
+				linkedTriangles.AddLast(enumerator.Current);
 			}
+
+			ClipOutTriangles (root, linkedTriangles);
+
+			triangles.Clear();
+			FastLinkedList<Triangle>.Node current = linkedTriangles.First;
+			while(current != null)
+			{
+				triangles.Add(current.Value);
+				current = current.Next;
+			}
+		}
+		
+		private void ClipOutTriangles(Node node, FastLinkedList<Triangle> triangles)
+		{
+			if (triangles == null || triangles.First == null)return;
+			if(node == null)return;
+			
+			FastLinkedList<Triangle> lessThan = new FastLinkedList<Triangle>();
+			FastLinkedList<Triangle> greaterThan = new FastLinkedList<Triangle>();
+			
+			FastLinkedList<Triangle>.Node current = triangles.First;
+			while(current != null)
+			{
+				Partitioner.Orientation orient = Partitioner.SliceTriangle(current.Value, node.SplitPlane, lessThan, greaterThan, lessThan, greaterThan);
+				current = current.Next;
+			}
+
+			triangles.Clear();
 
 			if(node.LessThan != null)
 				ClipOutTriangles (node.LessThan, lessThan);
 			else 
 				lessThan.Clear();
-			ClipOutTriangles (node.GreaterThan, greaterThan);
+			ClipOutTriangles (node.GreaterThan, greaterThan);			
 
-			triangles.Clear ();
-			triangles.AddRange (lessThan);
-			triangles.AddRange (greaterThan);
+			triangles.AppendList(lessThan);
+			triangles.AppendList(greaterThan);
 		}
 
 		public void ClipByTree(BSPTree tree) 

@@ -25,8 +25,8 @@ namespace CSG
 		private const float SplitEpsilon = 0.00001f;
 
 		public static Orientation SliceTriangle(Triangle triangle, Plane plane, 
-		                                List<Triangle> lessThan, List<Triangle> greaterThan, 
-		                                List<Triangle> lessThanPlanar, List<Triangle> greaterThanPlanar)
+		                                        FastLinkedList<Triangle> lessThan, FastLinkedList<Triangle> greaterThan, 
+		                                        FastLinkedList<Triangle> lessThanPlanar, FastLinkedList<Triangle> greaterThanPlanar)
 		{
 			Orientation[] vertOrientations = new Orientation[3];
 			Orientation triOrientation = Orientation.CoPlanar;
@@ -55,21 +55,21 @@ namespace CSG
 					if(planeTriOrientation > 0)
 					{
 						//Debug.Log(">> coplanar - GREATER");
-						greaterThanPlanar.Add(triangle);
+						greaterThanPlanar.AddLast(triangle);
 					}
 					else
 					{
 						//Debug.Log(">> coplanar - LESS");
-						lessThanPlanar.Add(triangle);
+						lessThanPlanar.AddLast(triangle);
 					}
 				break;
 				case Orientation.LessThan:
 					//Debug.Log(">> LESS");
-					lessThan.Add(triangle);
+					lessThan.AddLast(triangle);
 				break;
 				case Orientation.GreaterThan:
 					//Debug.Log(">> GREATER");
-					greaterThan.Add(triangle);
+					greaterThan.AddLast(triangle);
 				break;
 				case Orientation.Spanning:
 					//Debug.Log(">> SPANNING");
@@ -108,14 +108,14 @@ namespace CSG
 
 					if (ltSpanning.Count >= 3) 
 					{
-						lessThan.Add(new Triangle(ltSpanning[0], ltSpanning[1], ltSpanning[2]));
-						if(ltSpanning.Count >= 4)lessThan.Add(new Triangle(ltSpanning[0], ltSpanning[2], ltSpanning[3]));
+						lessThan.AddLast(new Triangle(ltSpanning[0], ltSpanning[1], ltSpanning[2]));
+						if(ltSpanning.Count >= 4)lessThan.AddLast(new Triangle(ltSpanning[0], ltSpanning[2], ltSpanning[3]));
 					}
 
 					if (gtSpanning.Count >= 3) 
 					{
-						greaterThan.Add(new Triangle(gtSpanning[0], gtSpanning[1], gtSpanning[2]));
-						if(gtSpanning.Count >= 4)greaterThan.Add(new Triangle(gtSpanning[0], gtSpanning[2], gtSpanning[3]));
+						greaterThan.AddLast(new Triangle(gtSpanning[0], gtSpanning[1], gtSpanning[2]));
+						if(gtSpanning.Count >= 4)greaterThan.AddLast(new Triangle(gtSpanning[0], gtSpanning[2], gtSpanning[3]));
 					}
 				break;
 			}
