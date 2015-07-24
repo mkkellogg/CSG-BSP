@@ -1,18 +1,19 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\CSG-BSP\Scripts\Tests\BasicTest.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\CSG-BSP\Scripts\CSG\Partitioner.cs">
     <Files>
-      <File FileName="Assets\CSG-BSP\Scripts\CSG\Partitioner.cs" Line="102" Column="36" />
-      <File FileName="Assets\CSG-BSP\Scripts\CSGUtil.cs" Line="1" Column="1" />
-      <File FileName="Assets\CSG-BSP\Scripts\CSG\BSPTree.cs" Line="47" Column="26" />
-      <File FileName="Assets\CSG-BSP\Scripts\CSG\Triangle.cs" Line="1" Column="1" />
+      <File FileName="Assets\CSG-BSP\Scripts\CSGUtil.cs" Line="174" Column="9" />
+      <File FileName="Assets\CSG-BSP\Scripts\CSG\Partitioner.cs" Line="92" Column="53" />
+      <File FileName="Assets\CSG-BSP\Scripts\CSG\BSPTree.cs" Line="1" Column="1" />
+      <File FileName="Assets\CSG-BSP\Scripts\CSG\Triangle.cs" Line="53" Column="14" />
       <File FileName="Assets\CSG-BSP\Scripts\CSG\Plane.cs" Line="1" Column="1" />
-      <File FileName="Assets\CSG-BSP\Scripts\CSG\Vertex.cs" Line="1" Column="1" />
+      <File FileName="Assets\CSG-BSP\Scripts\CSG\Vertex.cs" Line="47" Column="23" />
       <File FileName="Assets\CSG-BSP\Scripts\CSG\BSPOperations.cs" Line="1" Column="1" />
       <File FileName="Assets\CSG-BSP\Scripts\CSG\Vector3D.cs" Line="1" Column="1" />
       <File FileName="Assets\CSG-BSP\Scripts\CSG\Vector4D.cs" Line="1" Column="1" />
-      <File FileName="Assets\CSG-BSP\Scripts\Tests\BasicTest.cs" Line="38" Column="1" />
-      <File FileName="Assets\CSG-BSP\Scripts\Structure\FastLinkedList.cs" Line="19" Column="27" />
+      <File FileName="Assets\CSG-BSP\Scripts\Tests\BasicTest.cs" Line="47" Column="41" />
+      <File FileName="Assets\CSG-BSP\Scripts\Structure\FastLinkedList.cs" Line="1" Column="1" />
+      <File FileName="Assets\CSG-BSP\Scripts\CSG\UV.cs" Line="23" Column="3" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

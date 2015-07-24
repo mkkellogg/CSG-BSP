@@ -209,11 +209,11 @@ namespace CSG
 				FastLinkedList<Triangle>.Node current = triangles.First;
 				while(current != null)
 				{
-					current.Value.Flip();
+					current.Value.Invert();
 					current = current.Next;
 				}
 				
-				SplitPlane.Flip ();
+				SplitPlane.Invert ();
 
 				Node tempList = LessThan;
 				LessThan = GreaterThan;

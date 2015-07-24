@@ -6,20 +6,12 @@ namespace CSG
 {
 	public class Partitioner 
 	{
-		public class PartitionException : System.Exception
-		{
-			public PartitionException(string msg) : base(msg)
-			{
-
-			}
-		}
-
 		public enum Orientation
 		{
 			CoPlanar = 0,
 			LessThan = 1,
 			GreaterThan = 2,
-			Spanning = 4
+			Split = 4
 		}
 
 		private const float SplitEpsilon = 0.00001f;
@@ -35,44 +27,31 @@ namespace CSG
 			for(int i =0; i < 3; i++)
 			{
 				Orientation currentOrientation =  ClassifyVertexOrientation(triangle.GetVertexByIndex(i), plane);
-				/*Debug.Log("vert: "+ triangle.GetVertexByIndex(i).Position.X+","+triangle.GetVertexByIndex(i).Position.Y+","+triangle.GetVertexByIndex(i).Position.Z);
-				Debug.Log("plane: "+ plane.Normal.X+","+plane.Normal.Y+","+plane.Normal.Z+","+plane.D);
-				Debug.Log("Orientation: "+currentOrientation);*/
 				vertOrientations[i] = currentOrientation;
 				orientationsFound |= (int)currentOrientation;
 			}
 
 			if (orientationsFound > (int)Orientation.GreaterThan)
-				triOrientation = Orientation.Spanning;
+				triOrientation = Orientation.Split;
 			else
 				triOrientation = (Orientation)orientationsFound;
 
 			switch(triOrientation)
 			{
 				case Orientation.CoPlanar:
-					
 					float planeTriOrientation = triangle.OrientationPlane.Normal.Dot(plane.Normal);
 					if(planeTriOrientation > 0)
-					{
-						//Debug.Log(">> coplanar - GREATER");
 						greaterThanPlanar.AddLast(triangle);
-					}
 					else
-					{
-						//Debug.Log(">> coplanar - LESS");
 						lessThanPlanar.AddLast(triangle);
-					}
 				break;
 				case Orientation.LessThan:
-					//Debug.Log(">> LESS");
 					lessThan.AddLast(triangle);
 				break;
 				case Orientation.GreaterThan:
-					//Debug.Log(">> GREATER");
 					greaterThan.AddLast(triangle);
 				break;
-				case Orientation.Spanning:
-					//Debug.Log(">> SPANNING");
+				case Orientation.Split:
 					List<Vertex> ltSpanning = new List<Vertex>();
 					List<Vertex> gtSpanning = new List<Vertex>();
 
@@ -89,12 +68,22 @@ namespace CSG
 
 						Vector3D currentEdge = nextVertex.Position.SubtractedBy(currentVertex.Position);
 
-						if(currentOrientation != Orientation.LessThan)gtSpanning.Add(currentVertex);
-						if(currentOrientation != Orientation.GreaterThan)ltSpanning.Add(currentVertex);
+						switch(currentOrientation)
+						{
+							case Orientation.CoPlanar:
+								gtSpanning.Add(currentVertex);
+								ltSpanning.Add(currentVertex);
+							break;
+							case Orientation.LessThan:
+								ltSpanning.Add(currentVertex);
+							break;
+							case Orientation.GreaterThan:
+								gtSpanning.Add(currentVertex);
+							break;
+						}
 
-						if(currentOrientation != nextOrientation &&
-					  	   currentOrientation != Orientation.CoPlanar && 
-					  	   nextOrientation != Orientation.CoPlanar)
+						if(currentOrientation == Orientation.GreaterThan && nextOrientation == Orientation.LessThan ||
+					       currentOrientation == Orientation.LessThan && nextOrientation == Orientation.GreaterThan )
 						{
 							float splitPortion = plane.D - plane.Normal.Dot(currentVertex.Position);
 							float fullPortion = plane.Normal.Dot(currentEdge);
@@ -109,13 +98,15 @@ namespace CSG
 					if (ltSpanning.Count >= 3) 
 					{
 						lessThan.AddLast(new Triangle(ltSpanning[0], ltSpanning[1], ltSpanning[2]));
-						if(ltSpanning.Count >= 4)lessThan.AddLast(new Triangle(ltSpanning[0], ltSpanning[2], ltSpanning[3]));
+						if(ltSpanning.Count >= 4)
+							lessThan.AddLast(new Triangle(ltSpanning[0], ltSpanning[2], ltSpanning[3]));
 					}
 
 					if (gtSpanning.Count >= 3) 
 					{
 						greaterThan.AddLast(new Triangle(gtSpanning[0], gtSpanning[1], gtSpanning[2]));
-						if(gtSpanning.Count >= 4)greaterThan.AddLast(new Triangle(gtSpanning[0], gtSpanning[2], gtSpanning[3]));
+						if(gtSpanning.Count >= 4)
+							greaterThan.AddLast(new Triangle(gtSpanning[0], gtSpanning[2], gtSpanning[3]));
 					}
 				break;
 			}

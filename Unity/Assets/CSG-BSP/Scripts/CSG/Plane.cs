@@ -14,7 +14,7 @@ namespace CSG
 			D = d;
 		}
 
-		public void Flip()
+		public void Invert()
 		{
 			Normal.Invert ();
 			D = -D;

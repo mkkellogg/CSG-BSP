@@ -27,9 +27,9 @@ namespace CSG
 			C = polygon.C;
 		}
 
-		public void Flip()
+		public void Invert()
 		{
-			OrientationPlane.Flip ();
+			OrientationPlane.Invert ();
 
 			A.Flip();
 			B.Flip();
@@ -47,15 +47,11 @@ namespace CSG
 			{
 			case 1:
 				return B;
-				break;
 			case 2:
 				return C;
-				break;
 			default:
 				return A;
-				break;
 			}
-			return r;
 		}
 
 		public void SetVertexByIndex(int index, Vertex vertex)
