@@ -5,6 +5,8 @@ using System.Collections.Generic;
 public class BasicTest : MonoBehaviour 
 {
 	public GameObject TargetMesh;
+	public Transform ResultPosition;
+	public Transform Anchor;
 
 	void Start () 
 	{
@@ -27,7 +29,7 @@ public class BasicTest : MonoBehaviour
 		List<CSG.Triangle> thisTriangles = thisTree.GetAllTriangles();
 		List<CSG.Triangle> targetTriangles = targetTree.GetAllTriangles();
 
-		CSG.BSPTree subtracted = CSG.BSPOperations.Subtract(thisTree, targetTree);
+		CSG.BSPTree subtracted = CSG.Operations.Subtract(thisTree, targetTree);
 		List<CSG.Triangle> subtractedTriangles = subtracted.GetAllTriangles();
 
 		Debug.Log(this.name + " BSP tree triangle count: " + thisTriangles.Count+
@@ -44,7 +46,8 @@ public class BasicTest : MonoBehaviour
 		MeshRenderer subtrctedRenderer = subtractedObject.AddComponent<MeshRenderer>();
 		subtrctedRenderer.material = thisRenderer.material;
 		subtractedFilter.mesh = subtractedMesh;
-		subtractedObject.transform.Translate(7,0,0);
+		Vector3 translateVector = ResultPosition.position - Anchor.position;
+		subtractedObject.transform.Translate (translateVector);
 		//Debug.Log("subtractedMesh: "+subtractedMesh.subMeshCount+"," + subtractedMesh.GetTriangles(0).Length);
 	}
 
