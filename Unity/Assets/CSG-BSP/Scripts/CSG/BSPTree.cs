@@ -65,12 +65,12 @@ namespace CSG
 			}
 		}
 
-		public void ClipOutTriangles(FastLinkedList<Triangle> triangles)
+		public void ClipOutTriangles(FastLinkedList<Triangle> triangles, bool clipLessThan = true)
 		{
-			ClipOutTriangles (root, triangles);
+			ClipOutTriangles (root, triangles, clipLessThan);
 		}
 		
-		private void ClipOutTriangles(Node node, FastLinkedList<Triangle> triangles)
+		private void ClipOutTriangles(Node node, FastLinkedList<Triangle> triangles, bool clipLessThan = true)
 		{
 			if (triangles == null || triangles.First == null)return;
 			if(node == null)return;
@@ -88,27 +88,31 @@ namespace CSG
 			triangles.Clear();
 
 			if(node.LessThan != null)
-				ClipOutTriangles (node.LessThan, lessThan);
+				ClipOutTriangles (node.LessThan, lessThan, clipLessThan);
 			else 
-				lessThan.Clear();
-			ClipOutTriangles (node.GreaterThan, greaterThan);			
+				if(clipLessThan)lessThan.Clear();
 
+			if(node.GreaterThan != null)
+				ClipOutTriangles (node.GreaterThan, greaterThan, clipLessThan);	
+			else 
+				if(!clipLessThan)greaterThan.Clear();
+			
 			triangles.AppendIntoList(lessThan);
 			triangles.AppendIntoList(greaterThan);
 		}
 
-		public void ClipByTree(BSPTree tree) 
+		public void ClipByTree(BSPTree tree, bool clipLessThan = true) 
 		{
-			ClipByTree (root, tree);
+			ClipByTree (root, tree, clipLessThan);
 		}
 
-		private void ClipByTree(Node node, BSPTree tree)
+		private void ClipByTree(Node node, BSPTree tree, bool clipLessThan = true)
 		{
 			if(node == null)return;
 
-			tree.ClipOutTriangles (node.GetTriangleList());
-			ClipByTree (node.LessThan, tree);
-			ClipByTree (node.GreaterThan, tree);
+			tree.ClipOutTriangles (node.GetTriangleList(), clipLessThan);
+			ClipByTree (node.LessThan, tree, clipLessThan);
+			ClipByTree (node.GreaterThan, tree, clipLessThan);
 		}
 
 		public List<Triangle> GetAllTriangles()
