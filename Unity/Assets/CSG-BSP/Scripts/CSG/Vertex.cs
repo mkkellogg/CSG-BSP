@@ -32,7 +32,7 @@ namespace CSG
 			Color = color;
 		}
 
-		public void Flip()
+		public void Invert()
 		{
 			Normal.Invert ();
 		}

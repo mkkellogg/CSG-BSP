@@ -46,9 +46,9 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\CSG-BSP\Scripts\CSG\BSPOperations.cs" />
      <Compile Include="Assets\CSG-BSP\Scripts\CSG\BSPTree.cs" />
      <Compile Include="Assets\CSG-BSP\Scripts\CSG\Color4.cs" />
+     <Compile Include="Assets\CSG-BSP\Scripts\CSG\Operations.cs" />
      <Compile Include="Assets\CSG-BSP\Scripts\CSG\Partitioner.cs" />
      <Compile Include="Assets\CSG-BSP\Scripts\CSG\Plane.cs" />
      <Compile Include="Assets\CSG-BSP\Scripts\CSG\Triangle.cs" />

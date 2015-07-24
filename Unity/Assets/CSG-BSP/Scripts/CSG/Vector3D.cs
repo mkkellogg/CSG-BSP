@@ -23,22 +23,6 @@ namespace CSG
 			Z = src.Z;
 		}
 
-		public Vector3D(float[] elements)
-		{
-			if(elements != null && elements.Length >= 3)
-			{
-				X = elements[0];
-				Y = elements[1];
-				Z = elements[2];
-			}
-			else
-			{
-				X = 0;
-				Y = 0;
-				Z = 0;
-			}
-		}
-
 		public Vector3D Clone()
 		{
 			return new Vector3D (this);

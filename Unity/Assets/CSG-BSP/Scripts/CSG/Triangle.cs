@@ -19,21 +19,21 @@ namespace CSG
 			C = c;
 		}
 
-		public Triangle(Triangle polygon)
+		public Triangle(Triangle triangle)
 		{
-			OrientationPlane = polygon.OrientationPlane;
-			A = polygon.A;
-			B = polygon.B;
-			C = polygon.C;
+			OrientationPlane = triangle.OrientationPlane;
+			A = triangle.A;
+			B = triangle.B;
+			C = triangle.C;
 		}
 
 		public void Invert()
 		{
 			OrientationPlane.Invert ();
 
-			A.Flip();
-			B.Flip();
-			C.Flip();
+			A.Invert();
+			B.Invert();
+			C.Invert();
 
 			Vertex temp = A;
 			A = C;

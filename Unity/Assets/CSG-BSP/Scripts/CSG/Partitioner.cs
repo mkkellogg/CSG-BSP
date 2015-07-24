@@ -52,8 +52,8 @@ namespace CSG
 					greaterThan.AddLast(triangle);
 				break;
 				case Orientation.Split:
-					List<Vertex> ltSpanning = new List<Vertex>();
-					List<Vertex> gtSpanning = new List<Vertex>();
+					List<Vertex> ltSplit = new List<Vertex>();
+					List<Vertex> gtSplit = new List<Vertex>();
 
 					for(int i=0; i < 3; i++)
 					{
@@ -71,14 +71,14 @@ namespace CSG
 						switch(currentOrientation)
 						{
 							case Orientation.CoPlanar:
-								gtSpanning.Add(currentVertex);
-								ltSpanning.Add(currentVertex);
+								gtSplit.Add(currentVertex);
+								ltSplit.Add(currentVertex);
 							break;
 							case Orientation.LessThan:
-								ltSpanning.Add(currentVertex);
+								ltSplit.Add(currentVertex);
 							break;
 							case Orientation.GreaterThan:
-								gtSpanning.Add(currentVertex);
+								gtSplit.Add(currentVertex);
 							break;
 						}
 
@@ -90,23 +90,23 @@ namespace CSG
 							float splitFraction = splitPortion / fullPortion;
 							Vertex splitVertex = currentVertex.Lerped(nextVertex, splitFraction);
 							
-							gtSpanning.Add(splitVertex);
-							ltSpanning.Add(splitVertex);
+							gtSplit.Add(splitVertex);
+							ltSplit.Add(splitVertex);
 						}  		
 					}
 
-					if (ltSpanning.Count >= 3) 
+					if (ltSplit.Count >= 3) 
 					{
-						lessThan.AddLast(new Triangle(ltSpanning[0], ltSpanning[1], ltSpanning[2]));
-						if(ltSpanning.Count >= 4)
-							lessThan.AddLast(new Triangle(ltSpanning[0], ltSpanning[2], ltSpanning[3]));
+						lessThan.AddLast(new Triangle(ltSplit[0], ltSplit[1], ltSplit[2]));
+						if(ltSplit.Count >= 4)
+							lessThan.AddLast(new Triangle(ltSplit[0], ltSplit[2], ltSplit[3]));
 					}
 
-					if (gtSpanning.Count >= 3) 
+					if (gtSplit.Count >= 3) 
 					{
-						greaterThan.AddLast(new Triangle(gtSpanning[0], gtSpanning[1], gtSpanning[2]));
-						if(gtSpanning.Count >= 4)
-							greaterThan.AddLast(new Triangle(gtSpanning[0], gtSpanning[2], gtSpanning[3]));
+						greaterThan.AddLast(new Triangle(gtSplit[0], gtSplit[1], gtSplit[2]));
+						if(gtSplit.Count >= 4)
+							greaterThan.AddLast(new Triangle(gtSplit[0], gtSplit[2], gtSplit[3]));
 					}
 				break;
 			}
