@@ -1,4 +1,15 @@
-﻿using UnityEngine;
+﻿/**
+ * 
+ * class: CSGUtil
+ * 
+ * Author: Mark Kellogg
+ * 
+ * Contains utility functions for converting from BSPTrees to meshes
+ * and vice-versa.
+ * 
+ */
+
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -6,16 +17,22 @@ namespace CSG
 {
 	public class CSGUtil 
 	{
+		/**
+		 * Create a Mesh instance from @tree.
+		 */
 		public static Mesh FromBSPtree(BSPTree tree)
 		{
 			if(tree == null) return null;
 
 			List<Triangle> allTriangles = tree.GetAllTriangles();
 
+			// create the various attribute arrays required by a Mesh object
 			Vector3[] vertices = new Vector3[allTriangles.Count * 3];
 			Vector3[] normals = new Vector3[allTriangles.Count * 3];
 			Vector4[] tangents = new Vector4[allTriangles.Count * 3];
 			Vector2[] uvs1 = new Vector2[allTriangles.Count * 3];
+
+			// pull the attributes from @tree and put them into the above arrays
 			GetVertexAttributes(allTriangles, vertices, normals, tangents, uvs1);
 
 			Mesh mesh = new Mesh();
@@ -25,6 +42,7 @@ namespace CSG
 			mesh.tangents = tangents;
 			mesh.uv = uvs1;
 
+			// copy vertex positions the mesh's 'triangles' array
 			int[] triangles = new int[allTriangles.Count * 3];
 			for(int i=0; i < vertices.Length; i++)
 			{
@@ -37,6 +55,10 @@ namespace CSG
 			return mesh;
 		}
 
+		/**
+		 * Pull vertex attributes from each vertex in each triangle in @allTriangles, and copy
+		 * them into the appropriate array parameter.
+		 */ 
 		private static void GetVertexAttributes(List<Triangle> allTriangles, Vector3[] positions, Vector3[] normals, Vector4[] tangents, Vector2[] uvs1)
 		{
 			if(allTriangles == null)return;
@@ -66,17 +88,27 @@ namespace CSG
 			}
 		}
 
+		/**
+		 * Create a new BSPTree instance from @mesh using the Identity matrix
+		 * to transform all vertices, normals, and tangents.
+		 */ 
 		public static BSPTree FromMesh(Mesh mesh)
 		{
 			return FromMesh(mesh, new Matrix4x4());
 		}
 
+		/**
+		 * Create a new BSPTree instance from @mesh using @transform
+		 * to transform all vertices, normals, and tangents.
+		 */
 		public static BSPTree FromMesh(Mesh mesh, Matrix4x4 transform)
 		{
 			BSPTree tree = new BSPTree();
 
+			// get a list of all triangles in @mesh
 			List<Triangle> meshTriangles = GetMeshTriangles(mesh);
 
+			// loop through each triangle and transform its vertices by @transform
 			for(int i = 0; i < meshTriangles.Count; i++)
 			{
 				Triangle tri = meshTriangles[i];	
@@ -95,6 +127,32 @@ namespace CSG
 			return tree;
 		}
 
+		/**
+		 * Transform the relevant attributes of @vertex by @transform.
+		 */ 
+		public static Vertex TransformVertex(Vertex vertex, Matrix4x4 transform)
+		{
+			// transform vertex position
+			Vector4 uVector = new Vector4(vertex.Position.X, vertex.Position.Y, vertex.Position.Z, 1);
+			uVector = transform * uVector;
+			vertex.Position = new Vector3D(uVector.x, uVector.y, uVector.z);
+
+			// transform vertex normal
+			uVector = new Vector4(vertex.Normal.X, vertex.Normal.Y, vertex.Normal.Z, 0);
+			uVector = transform * uVector;
+			vertex.Normal = new Vector3D(uVector.x, uVector.y, uVector.z);
+
+			// transform vertex tangent
+			Vector4 tVector = new Vector4(vertex.Tangent.X, vertex.Tangent.Y, vertex.Tangent.Z, 0);
+			tVector = transform * tVector;
+			vertex.Tangent = new Vector4D(tVector.x, tVector.y, tVector.z, tVector.w);
+			
+			return vertex;
+		}
+
+		/**
+		 * Create a list of Triangle instances from the vertex data in @mesh.
+		 */
 		public static List<Triangle> GetMeshTriangles(Mesh mesh)
 		{
 			List<Triangle> triangles = new List<Triangle>();
@@ -107,23 +165,11 @@ namespace CSG
 			return triangles;
 		}
 
-		public static Vertex TransformVertex(Vertex vertex, Matrix4x4 transform)
-		{
-			Vector4 uVector = new Vector4(vertex.Position.X, vertex.Position.Y, vertex.Position.Z, 1);
-			uVector = transform * uVector;
-			vertex.Position = new Vector3D(uVector.x, uVector.y, uVector.z);
-			
-			uVector = new Vector4(vertex.Normal.X, vertex.Normal.Y, vertex.Normal.Z, 0);
-			uVector = transform * uVector;
-			vertex.Normal = new Vector3D(uVector.x, uVector.y, uVector.z);
-
-			Vector4 tVector = new Vector4(vertex.Tangent.X, vertex.Tangent.Y, vertex.Tangent.Z, 0);
-			tVector = transform * tVector;
-			vertex.Tangent = new Vector4D(tVector.x, tVector.y, tVector.z, tVector.w);
-
-			return vertex;
-		}
-
+		/**
+		 * 
+		 * Create a list of Triangle instances from the vertex data in the sub-mesh
+		 * of @mesh specified by @index, and place them in @dest.
+		 */
 		private static void AddSubMeshTriangles(Mesh mesh, int index, List<Triangle> dest)
 		{
 			int[] indices = mesh.GetTriangles(index);
@@ -167,11 +213,13 @@ namespace CSG
 				vtx1.Normal = csgN1;
 				vtx1.Tangent = csgT1;
 				vtx1.UV1 = csgUV1;
+
 				Vertex vtx2 = new Vertex();
 				vtx2.Position = csgV2;
 				vtx2.Normal = csgN2;
 				vtx2.Tangent = csgT2;
 				vtx2.UV1 = csgUV2;
+
 				Vertex vtx3 = new Vertex();
 				vtx3.Position = csgV3;
 				vtx3.Normal = csgN3;
