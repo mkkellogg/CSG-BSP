@@ -23,25 +23,29 @@ namespace CSG
 		public static Mesh FromBSPtree(BSPTree tree)
 		{
 			if(tree == null) return null;
+			return FromList(tree.GetAllTriangles());
+		}
 
-			List<Triangle> allTriangles = tree.GetAllTriangles();
-
+		public static Mesh FromList(List<Triangle> allTriangles)
+		{
+			if(allTriangles == null) return null;
+			
 			// create the various attribute arrays required by a Mesh object
 			Vector3[] vertices = new Vector3[allTriangles.Count * 3];
 			Vector3[] normals = new Vector3[allTriangles.Count * 3];
 			Vector4[] tangents = new Vector4[allTriangles.Count * 3];
 			Vector2[] uvs1 = new Vector2[allTriangles.Count * 3];
-
+			
 			// pull the attributes from @tree and put them into the above arrays
 			GetVertexAttributes(allTriangles, vertices, normals, tangents, uvs1);
-
+			
 			Mesh mesh = new Mesh();
-
+			
 			mesh.vertices = vertices;
 			mesh.normals = normals;
 			mesh.tangents = tangents;
 			mesh.uv = uvs1;
-
+			
 			// copy vertex positions the mesh's 'triangles' array
 			int[] triangles = new int[allTriangles.Count * 3];
 			for(int i=0; i < vertices.Length; i++)
@@ -49,9 +53,9 @@ namespace CSG
 				triangles[i] = i;
 			}
 			mesh.triangles = triangles;
-
+			
 			mesh.RecalculateNormals();
-
+			
 			return mesh;
 		}
 
@@ -170,67 +174,79 @@ namespace CSG
 		 * Create a list of Triangle instances from the vertex data in the sub-mesh
 		 * of @mesh specified by @index, and place them in @dest.
 		 */
-		private static void AddSubMeshTriangles(Mesh mesh, int index, List<Triangle> dest)
+		private static void AddSubMeshTriangles(Mesh mesh, int subMeshIndex, List<Triangle> dest)
 		{
-			int[] indices = mesh.GetTriangles(index);
+			int[] indices = mesh.GetTriangles(subMeshIndex);
 			
 			for(int vi = 0; vi < indices.Length; vi+= 3)
 			{
-				Vector3 v1 = mesh.vertices[indices[vi]];
-				Vector3 v2 = mesh.vertices[indices[vi + 1]];
-				Vector3 v3 = mesh.vertices[indices[vi + 2]];
-
-				Vector3 n1 = mesh.normals[indices[vi]];
-				Vector3 n2 = mesh.normals[indices[vi + 1]];
-				Vector3 n3 = mesh.normals[indices[vi + 2]];
-
-				Vector4 t1 = mesh.tangents[indices[vi]];
-				Vector4 t2 = mesh.tangents[indices[vi + 1]];
-				Vector4 t3 = mesh.tangents[indices[vi + 2]];
-
-				Vector2 uv1 = mesh.uv[indices[vi]];
-				Vector2 uv2 = mesh.uv[indices[vi + 1]];
-				Vector2 uv3 = mesh.uv[indices[vi + 2]];
-				
-				Vector3D csgV1 = new Vector3D(v1.x, v1.y, v1.z);
-				Vector3D csgV2 = new Vector3D(v2.x, v2.y, v2.z);
-				Vector3D csgV3 = new Vector3D(v3.x, v3.y, v3.z);
-
-				Vector3D csgN1 = new Vector3D(n1.x, n1.y, n1.z);
-				Vector3D csgN2 = new Vector3D(n2.x, n2.y, n2.z);
-				Vector3D csgN3 = new Vector3D(n3.x, n3.y, n3.z);
-
-				Vector4D csgT1 = new Vector4D(t1.x, t1.y, t1.z, t1.w);
-				Vector4D csgT2 = new Vector4D(t2.x, t2.y, t2.z, t2.w);
-				Vector4D csgT3 = new Vector4D(t3.x, t3.y, t3.z, t3.w);
-
-				UV csgUV1 = new UV(uv1.x, uv1.y);
-				UV csgUV2 = new UV(uv2.x, uv2.y);
-				UV csgUV3 = new UV(uv3.x, uv3.y);
-				
-				Vertex vtx1 = new Vertex();
-				vtx1.Position = csgV1;
-				vtx1.Normal = csgN1;
-				vtx1.Tangent = csgT1;
-				vtx1.UV1 = csgUV1;
-
-				Vertex vtx2 = new Vertex();
-				vtx2.Position = csgV2;
-				vtx2.Normal = csgN2;
-				vtx2.Tangent = csgT2;
-				vtx2.UV1 = csgUV2;
-
-				Vertex vtx3 = new Vertex();
-				vtx3.Position = csgV3;
-				vtx3.Normal = csgN3;
-				vtx3.Tangent = csgT3;
-				vtx3.UV1 = csgUV3;
-				
-				Triangle tri = new Triangle(vtx1, vtx2, vtx3);
+				Triangle tri = ConvertMeshTriangle(mesh, indices, vi);
 				dest.Add(tri);
 			}
 		}
 
+		/**
+		 * Given @meshIndices, the array of vertex indices for @mesh, construct a triangle 
+		 * with all relevant vertex attribute data starting at the vertex pointed to by 
+		 * @index, using @index, @index+1, and @index+2 as the triangle's vertices.
+		 */
+		private static Triangle ConvertMeshTriangle(Mesh mesh, int[] meshIndices, int index)
+		{
+			Vector3 v1 = mesh.vertices[meshIndices[index]];
+			Vector3 v2 = mesh.vertices[meshIndices[index + 1]];
+			Vector3 v3 = mesh.vertices[meshIndices[index + 2]];
+			
+			Vector3 n1 = mesh.normals[meshIndices[index]];
+			Vector3 n2 = mesh.normals[meshIndices[index + 1]];
+			Vector3 n3 = mesh.normals[meshIndices[index + 2]];
+			
+			Vector4 t1 = mesh.tangents[meshIndices[index]];
+			Vector4 t2 = mesh.tangents[meshIndices[index + 1]];
+			Vector4 t3 = mesh.tangents[meshIndices[index + 2]];
+			
+			Vector2 uv1 = mesh.uv[meshIndices[index]];
+			Vector2 uv2 = mesh.uv[meshIndices[index + 1]];
+			Vector2 uv3 = mesh.uv[meshIndices[index + 2]];
+			
+			Vector3D csgV1 = new Vector3D(v1.x, v1.y, v1.z);
+			Vector3D csgV2 = new Vector3D(v2.x, v2.y, v2.z);
+			Vector3D csgV3 = new Vector3D(v3.x, v3.y, v3.z);
+			
+			Vector3D csgN1 = new Vector3D(n1.x, n1.y, n1.z);
+			Vector3D csgN2 = new Vector3D(n2.x, n2.y, n2.z);
+			Vector3D csgN3 = new Vector3D(n3.x, n3.y, n3.z);
+			
+			Vector4D csgT1 = new Vector4D(t1.x, t1.y, t1.z, t1.w);
+			Vector4D csgT2 = new Vector4D(t2.x, t2.y, t2.z, t2.w);
+			Vector4D csgT3 = new Vector4D(t3.x, t3.y, t3.z, t3.w);
+			
+			UV csgUV1 = new UV(uv1.x, uv1.y);
+			UV csgUV2 = new UV(uv2.x, uv2.y);
+			UV csgUV3 = new UV(uv3.x, uv3.y);
+			
+			Vertex vtx1 = new Vertex();
+			vtx1.Position = csgV1;
+			vtx1.Normal = csgN1;
+			vtx1.Tangent = csgT1;
+			vtx1.UV1 = csgUV1;
+			
+			Vertex vtx2 = new Vertex();
+			vtx2.Position = csgV2;
+			vtx2.Normal = csgN2;
+			vtx2.Tangent = csgT2;
+			vtx2.UV1 = csgUV2;
+			
+			Vertex vtx3 = new Vertex();
+			vtx3.Position = csgV3;
+			vtx3.Normal = csgN3;
+			vtx3.Tangent = csgT3;
+			vtx3.UV1 = csgUV3;
+			
+			Triangle tri = new Triangle(vtx1, vtx2, vtx3);
+
+			return tri;
+		}
+		
 		private static Vector2 ConvertToUnity(UV vector)
 		{
 			return new Vector2(vector.U, vector.V);

@@ -46,8 +46,8 @@ namespace CSG
 		 *
 		 */
 		public static Orientation SliceTriangle(Triangle triangle, Plane plane, 
-		                                        FastLinkedList<Triangle> lessThan, FastLinkedList<Triangle> greaterThan, 
-		                                        FastLinkedList<Triangle> lessThanPlanar, FastLinkedList<Triangle> greaterThanPlanar)
+		                                        IList<Triangle> lessThan, IList<Triangle> greaterThan, 
+		                                        IList<Triangle> lessThanPlanar, IList<Triangle> greaterThanPlanar)
 		{
 			Orientation[] vertOrientations = new Orientation[3];
 			Orientation triOrientation = Orientation.CoPlanar;
@@ -78,15 +78,15 @@ namespace CSG
 				// then we consider @triangle to be front-facing
 				float planeTriOrientation = triangle.OrientationPlane.Normal.Dot(plane.Normal);
 				if(planeTriOrientation > 0)
-					greaterThanPlanar.AddLast(triangle);
+					greaterThanPlanar.Add(triangle);
 				else
-					lessThanPlanar.AddLast(triangle);
+					lessThanPlanar.Add(triangle);
 				break;
 			case Orientation.LessThan:
-				lessThan.AddLast(triangle);
+				lessThan.Add(triangle);
 				break;
 			case Orientation.GreaterThan:
-				greaterThan.AddLast(triangle);
+				greaterThan.Add(triangle);
 				break;
 			case Orientation.Split:
 				List<Vertex> ltSplit = new List<Vertex>();
@@ -147,18 +147,18 @@ namespace CSG
 				// contains 4
 				if (ltSplit.Count >= 3) 
 				{
-					lessThan.AddLast(new Triangle(ltSplit[0], ltSplit[1], ltSplit[2]));
+					lessThan.Add(new Triangle(ltSplit[0], ltSplit[1], ltSplit[2]));
 					if(ltSplit.Count == 4)
-						lessThan.AddLast(new Triangle(ltSplit[0], ltSplit[2], ltSplit[3]));
+						lessThan.Add(new Triangle(ltSplit[0], ltSplit[2], ltSplit[3]));
 				}
 				
 				// create 1 new triangle if @gtSplit contains 3 vertices. create 2 triangles if it
 				// contains 4
 				if (gtSplit.Count >= 3) 
 				{
-					greaterThan.AddLast(new Triangle(gtSplit[0], gtSplit[1], gtSplit[2]));
+					greaterThan.Add(new Triangle(gtSplit[0], gtSplit[1], gtSplit[2]));
 					if(gtSplit.Count == 4)
-						greaterThan.AddLast(new Triangle(gtSplit[0], gtSplit[2], gtSplit[3]));
+						greaterThan.Add(new Triangle(gtSplit[0], gtSplit[2], gtSplit[3]));
 				}
 				break;
 			}
