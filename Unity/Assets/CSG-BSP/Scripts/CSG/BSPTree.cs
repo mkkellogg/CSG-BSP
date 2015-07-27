@@ -34,11 +34,7 @@ namespace CSG
 
 			// convert @triangles to a FastLinkedList structure.
 			FastLinkedList<Triangle> linkedTriangles = new FastLinkedList<Triangle>();
-			var enumerator = triangles.GetEnumerator();
-			while(enumerator.MoveNext())
-			{
-				linkedTriangles.AddLast(enumerator.Current);
-			}
+			linkedTriangles.CopyFrom(triangles);
 
 			// call the private, recursive version of AddTriangles
 			AddTriangles(root, linkedTriangles);
@@ -64,12 +60,9 @@ namespace CSG
 			// iterate through each triangle in @triangles and classify/partition each according
 			// @node's split plane. co-planar triangles go into @nodeTriangles, triangles on the front
 			// side go into @greaterThan, traingles on the back side go into @lessThan.
-			FastLinkedList<Triangle>.Node current = triangles.First;
-			while(current != null)
-			{
-				Partitioner.Orientation orient = Partitioner.SliceTriangle(current.Value, node.SplitPlane, lessThan, greaterThan, nodeTriangles, nodeTriangles);
-				current = current.Next;
-			}	
+			triangles.Iterate((Triangle tri) => {
+				Partitioner.Orientation orient = Partitioner.SliceTriangle(tri, node.SplitPlane, lessThan, greaterThan, nodeTriangles, nodeTriangles);
+			});
 				
 			// release clear memory occupied by @triangles
 			triangles.Clear();
@@ -135,13 +128,10 @@ namespace CSG
 			// @node's split plane. triangles on the front side go into @greaterThan, triangles 
 			// on the back side go into @lessThan. co-planar triangles whose normal matches that of
 			// @node's split plane go into @greaterThan; the rest go into @lessThan.
-			FastLinkedList<Triangle>.Node current = triangles.First;
-			while(current != null)
-			{
-				Partitioner.Orientation orient = Partitioner.SliceTriangle(current.Value, node.SplitPlane, lessThan, greaterThan, lessThan, greaterThan);
-				current = current.Next;
-			}
-
+			triangles.Iterate((Triangle tri) => {
+				Partitioner.Orientation orient = Partitioner.SliceTriangle(tri, node.SplitPlane, lessThan, greaterThan, lessThan, greaterThan);
+			});
+			
 			// release memory used by @triangles
 			triangles.Clear();
 
@@ -221,13 +211,10 @@ namespace CSG
 		{
 			if(node == null)return;
 
-			FastLinkedList<Triangle>.Node current = node.GetTriangleList().First;
-			while(current != null)
-			{
-				triangles.Add(current.Value);
-				current = current.Next;
-			}
-
+			node.GetTriangleList().Iterate((Triangle tri) => {
+				triangles.Add(tri);
+			});
+			
 			GetAllTriangles(node.LessThan, triangles);
 			GetAllTriangles(node.GreaterThan, triangles);
 		}
@@ -336,12 +323,9 @@ namespace CSG
 
 				copy.SplitPlane = SplitPlane;
 
-				FastLinkedList<Triangle>.Node current = triangles.First;
-				while(current != null)
-				{
-					copy.triangles.AddLast(current.Value);
-					current = current.Next;
-				}
+				triangles.Iterate((Triangle tri) => {
+					copy.triangles.AddLast(tri);
+				});
 
 				copy.LessThan = LessThan;
 				copy.GreaterThan = GreaterThan;

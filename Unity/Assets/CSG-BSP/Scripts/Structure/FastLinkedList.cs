@@ -71,10 +71,33 @@ namespace CSG
 
 		public void CopyInto(IList<T> copy)
 		{
+			if(copy == null)return;
+
 			FastLinkedList<T>.Node current = First;
 			while(current != null)
 			{
 				copy.Add(current.Value);
+				current = current.Next;
+			}
+		}
+
+		public void CopyFrom(IList<T> source)
+		{
+			if(source == null)return;
+
+			IEnumerator<T> enumerator = source.GetEnumerator();
+			while(enumerator.MoveNext())
+			{
+				AddLast (enumerator.Current);
+			}
+		}
+
+		public void Iterate(System.Action<T> action)
+		{
+			Node current = First;
+			while(current != null)
+			{
+				action.Invoke(current.Value);
 				current = current.Next;
 			}
 		}
