@@ -99,13 +99,13 @@ namespace CSG
 		 * If @clipLessThan is false, the operation is reversed and triangles portions outside the geometry
 		 * of this BSPTree instance are removed.
 		 */ 
-		public void ClipOutTriangles(FastLinkedList<Triangle> triangles, bool clipLessThan = true)
+		public void ClipOutTriangles(FastLinkedList<Triangle> triangles, bool clipLessThan = true, IList<Triangle> discarded = null)
 		{
 			// ensure the root node exists
 			if(root == null)return;
 
 			// call the private, recursive version of ClipOutTriangles
-			ClipOutTriangles (root, triangles, clipLessThan);
+			ClipOutTriangles (root, triangles, clipLessThan, discarded);
 		}
 
 		/**
@@ -123,7 +123,7 @@ namespace CSG
 		 * In that case the portions of triangles in @triangles that lie outside the geometry 
 		 * of this BSPTree instance are removed.
 		 */ 
-		private void ClipOutTriangles(Node node, FastLinkedList<Triangle> triangles, bool clipLessThan = true)
+		private void ClipOutTriangles(Node node, FastLinkedList<Triangle> triangles, bool clipLessThan = true, IList<Triangle> discarded = null)
 		{
 			if (triangles == null || triangles.First == null)return;
 			if(node == null)return;
@@ -149,17 +149,23 @@ namespace CSG
 			// geometry on that side. if it does not, and we want to clip out triangles
 			// inside this BSPTree's geometry (@clipLessThan == true), then we clear out @lessThan.
 			if(node.LessThan != null)
-				ClipOutTriangles (node.LessThan, lessThan, clipLessThan);
-			else 
-				if(clipLessThan)lessThan.Clear();
+				ClipOutTriangles (node.LessThan, lessThan, clipLessThan, discarded);
+			else if(clipLessThan)
+			{
+				if(discarded != null)lessThan.CopyInto(discarded);
+				lessThan.Clear();
+			}
 
 			// recurse on the front side of @node's split plane if this BSPTree contains
 			// geometry on that side. if it does not, and we want to clip out triangles
 			// outside this BSPTree's geometry (@clipLessThan == false), then we clear out @greaterThan.
 			if(node.GreaterThan != null)
-				ClipOutTriangles (node.GreaterThan, greaterThan, clipLessThan);	
-			else 
-				if(!clipLessThan)greaterThan.Clear();
+				ClipOutTriangles (node.GreaterThan, greaterThan, clipLessThan, discarded);	
+			else if(!clipLessThan)
+			{
+				if(discarded != null)greaterThan.CopyInto(discarded);
+				greaterThan.Clear();
+			}
 
 			// rebuild @triangles with the properly clipped triangles
 			triangles.AppendIntoList(lessThan);
@@ -174,9 +180,9 @@ namespace CSG
 		 * If @clipLessThan is false, the operation is reversed and triangle portions 
 		 * outside the geometry of @tree instance are removed.
 		 */ 
-		public void ClipByTree(BSPTree tree, bool clipLessThan = true) 
+		public void ClipByTree(BSPTree tree, bool clipLessThan = true, IList<Triangle> discarded = null) 
 		{
-			ClipByTree (root, tree, clipLessThan);
+			ClipByTree (root, tree, clipLessThan, discarded);
 		}
 
 		/**
@@ -188,13 +194,13 @@ namespace CSG
 		 * If @clipLessThan is false, the operation is reversed and triangle portions 
 		 * outside the geometry of @tree instance are removed.
 		 */ 
-		private void ClipByTree(Node node, BSPTree tree, bool clipLessThan = true)
+		private void ClipByTree(Node node, BSPTree tree, bool clipLessThan = true, IList<Triangle> discarded = null)
 		{
 			if(node == null)return;
 
-			tree.ClipOutTriangles (node.GetTriangleList(), clipLessThan);
-			ClipByTree (node.LessThan, tree, clipLessThan);
-			ClipByTree (node.GreaterThan, tree, clipLessThan);
+			tree.ClipOutTriangles (node.GetTriangleList(), clipLessThan, discarded);
+			ClipByTree (node.LessThan, tree, clipLessThan, discarded);
+			ClipByTree (node.GreaterThan, tree, clipLessThan, discarded);
 		}
 
 		/**
@@ -267,6 +273,27 @@ namespace CSG
 			copy.LessThan = Clone(node.LessThan);
 			copy.GreaterThan = Clone(node.GreaterThan);
 			return copy;
+		}
+
+		/**
+		 * Traverse the entire tree and call @action for each node.
+		 */
+		public void Traverse(System.Action<FastLinkedList<Triangle>, Plane> action)
+		{
+			Traverse(root, action);
+		}
+
+		/**
+		 * Recursive Traverse() - Traverse the entire tree and call @action for each node.
+		 */
+		private void Traverse(Node node, System.Action<FastLinkedList<Triangle>, Plane> action)
+		{
+			if(node == null)return;
+
+			action.Invoke(node.GetTriangleList(), node.SplitPlane);
+
+			Traverse(node.LessThan, action);
+			Traverse(node.GreaterThan, action);
 		}
 
 		/**
