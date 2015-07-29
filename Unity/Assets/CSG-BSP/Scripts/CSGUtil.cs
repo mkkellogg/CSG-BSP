@@ -31,29 +31,20 @@ namespace CSG
 			if(allTriangles == null) return null;
 			
 			// create the various attribute arrays required by a Mesh object
-			Vector3[] vertices = new Vector3[allTriangles.Count * 3];
-			Vector3[] normals = new Vector3[allTriangles.Count * 3];
-			Vector4[] tangents = new Vector4[allTriangles.Count * 3];
-			Vector2[] uvs1 = new Vector2[allTriangles.Count * 3];
+			Vector3[] positions = null;
+			Vector2[] uvs1 = null;
+			int[] triangles = null;
 			
 			// pull the attributes from @tree and put them into the above arrays
-			GetVertexAttributes(allTriangles, vertices, normals, tangents, uvs1);
+			GetVertexAttributes(allTriangles, out positions, out uvs1, out triangles);
 			
 			Mesh mesh = new Mesh();
-			
-			mesh.vertices = vertices;
-			mesh.normals = normals;
-			mesh.tangents = tangents;
+
+			mesh.vertices = positions;
 			mesh.uv = uvs1;
-			
-			// copy vertex positions the mesh's 'triangles' array
-			int[] triangles = new int[allTriangles.Count * 3];
-			for(int i=0; i < vertices.Length; i++)
-			{
-				triangles[i] = i;
-			}
-			mesh.triangles = triangles;
-			
+
+			mesh.SetTriangles(triangles, 0);
+			mesh.RecalculateBounds();
 			mesh.RecalculateNormals();
 			
 			return mesh;
@@ -63,33 +54,65 @@ namespace CSG
 		 * Pull vertex attributes from each vertex in each triangle in @allTriangles, and copy
 		 * them into the appropriate array parameter.
 		 */ 
-		private static void GetVertexAttributes(List<Triangle> allTriangles, Vector3[] positions, Vector3[] normals, Vector4[] tangents, Vector2[] uvs1)
+		private static void GetVertexAttributes(List<Triangle> allTriangles, out Vector3[] positions, out Vector2[] uvs1, out int[] triangles)
 		{
-			if(allTriangles == null)return;
+			positions = null;
+			uvs1 = null;
+			triangles = null;
+
+			if(allTriangles == null)return;	
+
+			//VectorComparer comparer = new VectorComparer();
+			Dictionary<Vector3, int> positionMap = new Dictionary<Vector3, int>();
+
+			List<Vector3> uniquePositions = new List<Vector3>();
+			List<Vector2> uniqueUVs = new List<Vector2>();
+			List<int> triangleList = new List<int>();
 
 			int vertexIndex = 0;
+			int[] tempIndices = new int[3];
+			Vector3[] tempPositions = new Vector3[3];
+			Vector2[] tempUVs = new Vector2[3];
+
 			for(int t = 0; t < allTriangles.Count; t++)
 			{
 				Triangle tri = allTriangles[t];
 
-				positions[vertexIndex] = ConvertToUnity(tri.A.Position);
-                positions[vertexIndex+1] = ConvertToUnity(tri.B.Position);
-                positions[vertexIndex+2] = ConvertToUnity(tri.C.Position);
+				tempPositions[0] = ConvertToUnity(tri.A.Position);
+				tempPositions[1] = ConvertToUnity(tri.B.Position);
+				tempPositions[2]= ConvertToUnity(tri.C.Position);
 
-                normals[vertexIndex] = ConvertToUnity(tri.A.Normal);
-                normals[vertexIndex+1] = ConvertToUnity(tri.B.Normal);
-                normals[vertexIndex+2] = ConvertToUnity(tri.C.Normal);
+				tempUVs[0] = ConvertToUnity(tri.A.UV1);
+				tempUVs[1] = ConvertToUnity(tri.B.UV1);
+				tempUVs[2] = ConvertToUnity(tri.C.UV1);
 
-                tangents[vertexIndex] = ConvertToUnity(tri.A.Tangent);
-                tangents[vertexIndex+1] = ConvertToUnity(tri.B.Tangent);
-                tangents[vertexIndex+2] = ConvertToUnity(tri.C.Tangent);
+				for(int i =0; i < 3; i++)
+				{
+					Vector3 cp = tempPositions[i];
+					Vector3 cuv = tempUVs[i];
+					//if(positionMap.ContainsKey(cp))					
+					//{
+					//	tempIndices[i] = positionMap[cp];
+					//}
+					//else
+					//{
+						//positionMap.Add(cp, uniquePositions.Count);
+						tempIndices[i] = uniquePositions.Count;
+						uniquePositions.Add(cp);
+						uniqueUVs.Add(cuv);
+					//}
+				}
 
-				uvs1[vertexIndex] = ConvertToUnity(tri.A.UV1);
-				uvs1[vertexIndex+1] = ConvertToUnity(tri.B.UV1);
-				uvs1[vertexIndex+2] = ConvertToUnity(tri.C.UV1);
+				triangleList.Add(tempIndices[0]);
+				triangleList.Add(tempIndices[1]);
+				triangleList.Add(tempIndices[2]);
 
 				vertexIndex += 3;
 			}
+
+			positions = uniquePositions.ToArray();
+			uvs1 = uniqueUVs.ToArray();
+			triangles = triangleList.ToArray();
 		}
 
 		/**
@@ -260,6 +283,33 @@ namespace CSG
 		private static Vector4 ConvertToUnity(Vector4D vector)
 		{
 			return new Vector4(vector.X, vector.Y, vector.Z, vector.W);
+		}
+
+		private class VectorComparer : IEqualityComparer<Vector3>
+		{
+			private static float epsilon = .0000001f;
+			public bool Equals(Vector3 v1, Vector3 v2)
+			{
+				if (v1.x <= v2.x + epsilon && v1.x >= v2.x - epsilon &&
+				    v1.y <= v2.y + epsilon && v1.y >= v2.y - epsilon &&
+				    v1.z <= v2.z + epsilon && v1.z >= v2.z - epsilon)
+				{
+					return true;
+				}
+				else
+				{
+					return false;
+				}
+
+				return false;
+			}
+			
+			
+			public int GetHashCode(Vector3 v)
+			{
+				int hCode = (int)v.x ^ (int)v.y ^ (int)v.z;
+				return hCode.GetHashCode();
+			}	
 		}
 	}
 }

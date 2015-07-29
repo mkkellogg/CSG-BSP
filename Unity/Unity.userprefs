@@ -1,8 +1,8 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\CSG-BSP\Scripts\Tests\TestManager.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\CSG-BSP\Scripts\CSGUtil.cs">
     <Files>
-      <File FileName="Assets\CSG-BSP\Scripts\CSGUtil.cs" Line="189" Column="63" />
+      <File FileName="Assets\CSG-BSP\Scripts\CSGUtil.cs" Line="42" Column="4" />
       <File FileName="Assets\CSG-BSP\Scripts\CSG\Partitioner.cs" Line="1" Column="1" />
       <File FileName="Assets\CSG-BSP\Scripts\CSG\BSPTree.cs" Line="1" Column="1" />
       <File FileName="Assets\CSG-BSP\Scripts\CSG\Triangle.cs" Line="1" Column="1" />
@@ -12,11 +12,12 @@
       <File FileName="Assets\CSG-BSP\Scripts\CSG\Vector4D.cs" Line="1" Column="1" />
       <File FileName="Assets\CSG-BSP\Scripts\Structure\FastLinkedList.cs" Line="1" Column="1" />
       <File FileName="Assets\CSG-BSP\Scripts\CSG\UV.cs" Line="1" Column="1" />
-      <File FileName="Assets\CSG-BSP\Scripts\Tests\SubtractionTest.cs" Line="52" Column="5" />
-      <File FileName="Assets\CSG-BSP\Scripts\Tests\SliceTest.cs" Line="48" Column="38" />
+      <File FileName="Assets\CSG-BSP\Scripts\Tests\SubtractionTest.cs" Line="1" Column="1" />
+      <File FileName="Assets\CSG-BSP\Scripts\Tests\SliceTest.cs" Line="1" Column="1" />
       <File FileName="Assets\CSG-BSP\Scripts\CSG\Operations.cs" Line="1" Column="1" />
-      <File FileName="Assets\CSG-BSP\Scripts\Tests\BaseTest.cs" Line="8" Column="35" />
-      <File FileName="Assets\CSG-BSP\Scripts\Tests\TestManager.cs" Line="32" Column="43" />
+      <File FileName="Assets\CSG-BSP\Scripts\Tests\BaseTest.cs" Line="1" Column="1" />
+      <File FileName="Assets\CSG-BSP\Scripts\Tests\TestManager.cs" Line="1" Column="1" />
+      <File FileName="Assets\CSG-BSP\Scripts\Extensions.cs" Line="113" Column="4" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

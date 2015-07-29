@@ -42,7 +42,7 @@ namespace CSG
 
 				SwitchToTestResultMode(bt, i);
 
-				while(!Input.anyKeyDown)
+				while(!Input.GetMouseButtonDown(0))
 				{
 					yield return null;
 				}
