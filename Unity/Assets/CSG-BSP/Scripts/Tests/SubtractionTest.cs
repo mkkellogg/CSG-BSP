@@ -55,11 +55,11 @@ namespace CSG
 			List<CSG.Triangle> subtractedTriangles = subtracted.GetAllTriangles();
 			
 			string debugLine1 = "SUBTRACTION  TEST: " + MeshA.name + " BSP tree triangle count: " + meshATriangles.Count+
-				", target ("+MeshB.name+") BSP tree triangle count: "+meshBTriangles.Count+
-					", >> subtraction result BSP tree triangle count: " + subtractedTriangles.Count;
+								", target ("+MeshB.name+") BSP tree triangle count: "+meshBTriangles.Count+
+								", >> subtraction result BSP tree triangle count: " + subtractedTriangles.Count;
 			
 			string debugLine2 = "BSP creation time: " + bspCreateTime + ", BSP clone time: " + cloneTime + 
-				", all triangles: " + getAlltrianglesTime + ", subtraction time: "+subtractionTime;
+								", all triangles: " + getAlltrianglesTime + ", subtraction time: "+subtractionTime;
 			
 			Debug.Log(debugLine1 + "\n" + debugLine2);
 			

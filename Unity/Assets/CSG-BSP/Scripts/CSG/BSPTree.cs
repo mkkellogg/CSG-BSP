@@ -120,7 +120,7 @@ namespace CSG
 		{
 			if (triangles == null || triangles.First == null)return;
 			if(node == null)return;
-			
+
 			FastLinkedList<Triangle> lessThan = new FastLinkedList<Triangle>();
 			FastLinkedList<Triangle> greaterThan = new FastLinkedList<Triangle>();
 

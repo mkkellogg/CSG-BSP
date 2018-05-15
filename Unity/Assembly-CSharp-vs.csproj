@@ -63,7 +63,6 @@
      <Compile Include="Assets\CSG-BSP\Scripts\Tests\SliceTest.cs" />
      <Compile Include="Assets\CSG-BSP\Scripts\Tests\SubtractionTest.cs" />
      <Compile Include="Assets\CSG-BSP\Scripts\Tests\TestManager.cs" />
-     <Compile Include="Assets\CSG-BSP\Scripts\UnshareNormals.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>D:/Programs/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>

@@ -27,6 +27,7 @@ namespace CSG
 			BSPTree aClone = a.Clone();
 			BSPTree bClone = b.Clone();
 
+			float startTime = Time.realtimeSinceStartup;
 			bClone.Invert ();
 			bClone.ClipByTree (a, false);
 			aClone.ClipByTree (b);

@@ -1,31 +1,32 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-namespace CSG
-{
-	public struct UV
-	{
-		public float U;
-		public float V;
+namespace CSG {
+    public class UV {
+        public float U;
+        public float V;
 
-		public UV(float u, float v)
-		{
-			U = u;
-			V = v;
-		}
+        public UV() {
+            this.Set(0, 0);
+        }
 
-		public UV(UV uv)
-		{
-			U = uv.U;
-			V = uv.V;
-		}
+        public UV(float u, float v) {
+            this.Set(u, v);
+        }
 
-		public UV Lerped(UV dest, float t)
-		{
-			float lerpedU = (dest.U - U) * t + U;
-			float lerpedV = (dest.V - V) * t + V;
+        public UV(UV uv) {
+            this.Set(uv.U, uv.V);
+        }
 
-			return new UV(lerpedU, lerpedV);
-		}
-	}
+        public void Set(float u, float v) {
+            U = u;
+            V = v;
+        }
+
+        public UV Lerped(UV dest, float t, UV outUV) {
+            outUV.U = (dest.U - U) * t + U;
+            outUV.V = (dest.V - V) * t + V;
+            return outUV;
+        }
+    }
 }

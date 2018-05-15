@@ -11,11 +11,6 @@ namespace CSG
 		public Transform ResultPosition;
 		public Transform Anchor;
 
-		void Start () 
-		{
-
-		}
-
 		public override void RunTest()
 		{
 			if(MeshA == null || MeshB == null)return;
@@ -55,11 +50,11 @@ namespace CSG
 			float sliceTime =  Time.realtimeSinceStartup - startTime;
 			
 			string debugLine1 = "SLICE TEST: " + MeshA.name + " BSP tree triangle count: " + meshATriangles.Count+
-				", target ("+MeshB.name+") BSP tree triangle count: "+meshBTriangles.Count+
-					", >> slice result BSP tree triangle count: " + slicedHalf1triangles.Count;
+								", target ("+MeshB.name+") BSP tree triangle count: "+meshBTriangles.Count+
+								", >> slice result BSP tree triangle count: " + slicedHalf1triangles.Count;
 			
 			string debugLine2 = "BSP creation time: " + bspCreateTime + ", BSP clone time: " + cloneTime + 
-				", all triangles: " + getAlltrianglesTime + ", slice time: "+sliceTime;
+								", all triangles: " + getAlltrianglesTime + ", slice time: "+sliceTime;
 			
 			Debug.Log(debugLine1 + "\n" + debugLine2);
 			

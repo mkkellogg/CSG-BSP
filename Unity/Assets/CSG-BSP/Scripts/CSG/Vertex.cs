@@ -1,54 +1,54 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-namespace CSG
-{
-	public struct Vertex 
-	{
-		public Vector3D Position;
-		public Vector3D Normal;
-		public Vector4D Tangent;
-		public UV UV1;
-		public UV UV2;
-		public Color4 Color;
+namespace CSG {
+    public class Vertex {
+        public Vector3D Position;
+        public Vector3D Normal;
+        public Vector4D Tangent;
+        public UV UV1;
+        public UV UV2;
+        public Color4 Color;
 
-		public Vertex(Vertex vertex)
-		{
-			Position = vertex.Position;
-			Normal = vertex.Normal;
-			Tangent = vertex.Tangent;
-			UV1 = vertex.UV1;
-			UV2 = vertex.UV2;
-			Color = vertex.Color;
-		}
+        public Vertex() {
+            Position = new Vector3D();
+            Normal = new Vector3D();
+            Tangent = new Vector4D();
+            UV1 = new UV();
+            UV2 = new UV();
+            Color = new Color4();
+        }
 
-		public Vertex(Vector3D position, Vector3D normal, Vector4D tangent, UV uv1, UV uv2, Color4 color)
-		{
-			Position = position;
-			Normal = normal;
-			Tangent = tangent;
-			UV1 = uv1;
-			UV2 = uv2;
-			Color = color;
-		}
+        public Vertex(Vertex vertex) {
+            Position = new Vector3D(vertex.Position);
+            Normal = new Vector3D(vertex.Normal);
+            Tangent = new Vector4D(vertex.Tangent);
+            UV1 = new UV(vertex.UV1);
+            UV2 = new UV(vertex.UV2);
+            Color = new Color4(vertex.Color);
+        }
 
-		public void Invert()
-		{
-			Normal.Invert ();
-		}
+        public Vertex(Vector3D position, Vector3D normal, Vector4D tangent, UV uv1, UV uv2, Color4 color) {
+            Position = new Vector3D(position);
+            Normal = new Vector3D(normal);
+            Tangent = new Vector4D(tangent);
+            UV1 = new UV(uv1);
+            UV2 = new UV(uv2);
+            Color = new Color4(color);
+        }
 
-		public Vertex Lerped (Vertex dest, float t) 
-		{
-			Vertex lerped;
+        public void Invert() {
+            Normal.Invert();
+        }
 
-			lerped.Position = Position.Lerped (dest.Position, t);
-			lerped.Normal = Normal.Lerped (dest.Normal, t);
-			lerped.Tangent = Tangent.Lerped (dest.Tangent, t);
-			lerped.UV1 = UV1.Lerped (dest.UV1, t);
-			lerped.UV2 = UV2.Lerped (dest.UV2, t);
-			lerped.Color = Color.Lerped (dest.Color, t);
-
-			return lerped;
-		}
-	}
+        public Vertex Lerped(Vertex dest, float t, Vertex outVertex) {
+            outVertex.Position = Position.Lerped(dest.Position, t, outVertex.Position);
+            outVertex.Normal = Normal.Lerped(dest.Normal, t, outVertex.Normal);
+            outVertex.Tangent = Tangent.Lerped(dest.Tangent, t, outVertex.Tangent);
+            outVertex.UV1 = UV1.Lerped(dest.UV1, t, outVertex.UV1);
+            outVertex.UV2 = UV2.Lerped(dest.UV2, t, outVertex.UV2);
+            outVertex.Color = Color.Lerped(dest.Color, t, outVertex.Color);
+            return outVertex;
+        }
+    }
 }

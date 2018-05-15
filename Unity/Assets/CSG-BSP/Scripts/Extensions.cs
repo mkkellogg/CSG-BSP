@@ -18,7 +18,8 @@ namespace CSG
 			var dictionary = new Dictionary<VertexKey, VertexEntry>(vertices.Length);
 			
 			//Goes through all the triangles and gathers up data to be used later
-			for (var i = 0; i < triangles.Length; i += 3) {
+			for (var i = 0; i < triangles.Length; i += 3) 
+			{
 				int i1 = triangles[i];
 				int i2 = triangles[i + 1];
 				int i3 = triangles[i + 2];
@@ -36,19 +37,22 @@ namespace CSG
 				//For each of the three points of the triangle
 				//  > Add this triangle as part of the triangles they're connected to.
 				
-				if (!dictionary.TryGetValue(key = new VertexKey(vertices[i1]), out entry)) {
+				if (!dictionary.TryGetValue(key = new VertexKey(vertices[i1]), out entry)) 
+				{
 					entry = new VertexEntry();
 					dictionary.Add(key, entry);
 				}
 				entry.Add(i1, triIndex);
 				
-				if (!dictionary.TryGetValue(key = new VertexKey(vertices[i2]), out entry)) {
+				if (!dictionary.TryGetValue(key = new VertexKey(vertices[i2]), out entry)) 
+				{
 					entry = new VertexEntry();
 					dictionary.Add(key, entry);
 				}
 				entry.Add(i2, triIndex);
 				
-				if (!dictionary.TryGetValue(key = new VertexKey(vertices[i3]), out entry)) {
+				if (!dictionary.TryGetValue(key = new VertexKey(vertices[i3]), out entry)) 
+				{
 					entry = new VertexEntry();
 					dictionary.Add(key, entry);
 				}
@@ -71,19 +75,24 @@ namespace CSG
 			//  }
 			//}
 			
-			foreach (var value in dictionary.Values) {
-				for (var i = 0; i < value.Count; ++i) {
+			foreach (var value in dictionary.Values) 
+			{
+				for (var i = 0; i < value.Count; ++i) 
+				{
 					var sum = new Vector3();
-					for (var j = 0; j < value.Count; ++j) {
-						if (value.VertexIndex[i] == value.VertexIndex[j]) {
+					for (var j = 0; j < value.Count; ++j) 
+					{
+						if (value.VertexIndex[i] == value.VertexIndex[j]) 
+						{
 							sum += triNormals[value.TriangleIndex[j]];
-						} else {
-							float dot = Vector3.Dot(
-								triNormals[value.TriangleIndex[i]],
-								triNormals[value.TriangleIndex[j]]);
+						} 
+						else 
+						{
+							float dot = Vector3.Dot(triNormals[value.TriangleIndex[i]],	triNormals[value.TriangleIndex[j]]);
 							dot = Mathf.Clamp(dot, -0.999999f, 0.999999f);
 							float acos = Mathf.Acos(dot);
-							if (acos <= angle) {
+							if (acos <= angle) 
+							{
 								sum += triNormals[value.TriangleIndex[j]];
 							}
 						}
@@ -105,18 +114,21 @@ namespace CSG
 			//Change this if you require a different precision.
 			private const int Tolerance = 1000000;
 			
-			public VertexKey(Vector3 position) {
+			public VertexKey(Vector3 position) 
+			{
 				_x = (long)(Mathf.Round(position.x * Tolerance));
 				_y = (long)(Mathf.Round(position.y * Tolerance));
 				_z = (long)(Mathf.Round(position.z * Tolerance));
 			}
 			
-			public override bool Equals(object obj) {
+			public override bool Equals(object obj) 
+			{
 				var key = (VertexKey)obj;
 				return _x == key._x && _y == key._y && _z == key._z;
 			}
 			
-			public override int GetHashCode() {
+			public override int GetHashCode() 
+			{
 				return (_x * 7 ^ _y * 13 ^ _z * 27).GetHashCode();
 			}
 		}
@@ -131,7 +143,8 @@ namespace CSG
 			
 			public int Count { get { return _count; } }
 			
-			public void Add(int vertIndex, int triIndex) {
+			public void Add(int vertIndex, int triIndex) 
+			{
 				//Auto-resize the arrays when needed
 				if (_reserved == _count) {
 					_reserved *= 2;

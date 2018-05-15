@@ -2,77 +2,74 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace CSG
-{
-	public struct Triangle
-	{
-		public Plane OrientationPlane;
-		public Vertex A;
-		public Vertex B;
-		public Vertex C;
+namespace CSG {
+    public class Triangle {
+        public Plane OrientationPlane;
+        public Vertex A;
+        public Vertex B;
+        public Vertex C;
 
-		public Triangle(Vertex a, Vertex b, Vertex c)
-		{
-			OrientationPlane = Plane.BuildFromVertices(a.Position, b.Position, c.Position);
-			A = a;
-			B = b;
-			C = c;
-		}
+        public Triangle(Vertex a, Vertex b, Vertex c) {
+            OrientationPlane = new Plane();
+            Plane.BuildFromVertices(a.Position, b.Position, c.Position, OrientationPlane);
+            A = new Vertex(a);
+            B = new Vertex(b);
+            C = new Vertex(c);
+        }
 
-		public Triangle(Triangle triangle)
-		{
-			OrientationPlane = triangle.OrientationPlane;
-			A = triangle.A;
-			B = triangle.B;
-			C = triangle.C;
-		}
+        public Triangle(Triangle triangle) {
+            OrientationPlane = new Plane(triangle.OrientationPlane);
+            A = new Vertex(triangle.A);
+            B = new Vertex(triangle.B);
+            C = new Vertex(triangle.C);
+        }
 
-		public void Invert()
-		{
-			OrientationPlane.Invert ();
+        public Triangle() {
+            OrientationPlane = new Plane();
+            A = new Vertex();
+            B = new Vertex();
+            C = new Vertex();
+        }
 
-			A.Invert();
-			B.Invert();
-			C.Invert();
+        public void Invert() {
+            OrientationPlane.Invert();
 
-			Vertex temp = A;
-			A = C;
-			C = temp;
-		}
+            A.Invert();
+            B.Invert();
+            C.Invert();
 
-		public Vertex GetVertexByIndex(int index)
-		{
-			Vertex r;
-			switch(index)
-			{
-			case 1:
-				return B;
-			case 2:
-				return C;
-			default:
-				return A;
-			}
-		}
+            Vertex temp = A;
+            A = C;
+            C = temp;
+        }
 
-		public void SetVertexByIndex(int index, Vertex vertex)
-		{
-			switch(index)
-			{
-			case 1:
-				B = vertex;
-				break;
-			case 2:
-				C = vertex;
-				break;
-			default:
-				A = vertex;
-				break;
-			}
-		}
+        public Vertex GetVertexByIndex(int index) {
+            switch (index) {
+                case 1:
+                    return B;
+                case 2:
+                    return C;
+                default:
+                    return A;
+            }
+        }
 
-		public void RebuildOrientationPlane()
-		{
-			OrientationPlane = Plane.BuildFromVertices(A.Position, B.Position, C.Position);
-		}
-	}
+        public void SetVertexByIndex(int index, Vertex vertex) {
+            switch (index) {
+                case 1:
+                    B = vertex;
+                    break;
+                case 2:
+                    C = vertex;
+                    break;
+                default:
+                    A = vertex;
+                    break;
+            }
+        }
+
+        public void RebuildOrientationPlane() {
+            Plane.BuildFromVertices(A.Position, B.Position, C.Position, OrientationPlane);
+        }
+    }
 }

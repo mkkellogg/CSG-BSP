@@ -1,23 +1,16 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\CSG-BSP\Scripts\CSGUtil.cs">
+  <MonoDevelop.Ide.Workspace />
+  <MonoDevelop.Ide.Workbench ActiveDocument="..\..\HookClimber\Assets\HookClimber\Scripts\Game\Object\Hookshot\ChainLink.cs">
     <Files>
-      <File FileName="Assets\CSG-BSP\Scripts\CSGUtil.cs" Line="42" Column="4" />
-      <File FileName="Assets\CSG-BSP\Scripts\CSG\Partitioner.cs" Line="1" Column="1" />
-      <File FileName="Assets\CSG-BSP\Scripts\CSG\BSPTree.cs" Line="1" Column="1" />
-      <File FileName="Assets\CSG-BSP\Scripts\CSG\Triangle.cs" Line="1" Column="1" />
-      <File FileName="Assets\CSG-BSP\Scripts\CSG\Plane.cs" Line="1" Column="1" />
-      <File FileName="Assets\CSG-BSP\Scripts\CSG\Vertex.cs" Line="1" Column="1" />
-      <File FileName="Assets\CSG-BSP\Scripts\CSG\Vector3D.cs" Line="1" Column="1" />
-      <File FileName="Assets\CSG-BSP\Scripts\CSG\Vector4D.cs" Line="1" Column="1" />
-      <File FileName="Assets\CSG-BSP\Scripts\Structure\FastLinkedList.cs" Line="1" Column="1" />
-      <File FileName="Assets\CSG-BSP\Scripts\CSG\UV.cs" Line="1" Column="1" />
-      <File FileName="Assets\CSG-BSP\Scripts\Tests\SubtractionTest.cs" Line="1" Column="1" />
-      <File FileName="Assets\CSG-BSP\Scripts\Tests\SliceTest.cs" Line="1" Column="1" />
-      <File FileName="Assets\CSG-BSP\Scripts\CSG\Operations.cs" Line="1" Column="1" />
-      <File FileName="Assets\CSG-BSP\Scripts\Tests\BaseTest.cs" Line="1" Column="1" />
-      <File FileName="Assets\CSG-BSP\Scripts\Tests\TestManager.cs" Line="1" Column="1" />
-      <File FileName="Assets\CSG-BSP\Scripts\Extensions.cs" Line="113" Column="4" />
+      <File FileName="..\..\HookClimber\Assets\HookClimber\Scripts\Game\Object\Hookshot\HookLink.cs" Line="36" Column="24" />
+      <File FileName="..\..\HookClimber\Assets\HookClimber\Scripts\Game\Object\Hookshot\ChainLink.cs" Line="77" Column="41" />
+      <File FileName="..\..\HookClimber\Assets\HookClimber\Scripts\Game\Object\Hookshot\Hook.cs" Line="25" Column="2" />
+      <File FileName="..\..\HookClimber\Assets\HookClimber\Scripts\Game\Object\Hookshot\Chain.cs" Line="265" Column="26" />
+      <File FileName="..\..\HookClimber\Assets\HookClimber\Scripts\Game\Object\Hookshot\HookTarget.cs" Line="1" Column="1" />
+      <File FileName="..\..\HookClimber\Assets\HookClimber\Shaders\SpriteDefaultAdditive.shader" Line="1" Column="1" />
+      <File FileName="..\..\HookClimber\Assets\HookClimber\Scripts\Game\Object\Hookshot\HookShot.cs" Line="62" Column="30" />
+      <File FileName="..\..\HookClimber\Assets\HookClimber\Scripts\Game\Actor\Player\Control\PlayerAnimatorController.cs" Line="156" Column="4" />
+      <File FileName="..\..\HookClimber\Assets\HookClimber\Scripts\Game\Actor\Player\Control\PlayerMotion.cs" Line="31" Column="26" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
