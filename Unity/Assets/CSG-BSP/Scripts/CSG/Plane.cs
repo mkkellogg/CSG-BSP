@@ -2,6 +2,7 @@
 using System.Collections;
 
 namespace CSG {
+
     public class Plane {
         private static Vector3D tempVectorA = new Vector3D();
         private static Vector3D tempVectorB = new Vector3D();
@@ -9,18 +10,22 @@ namespace CSG {
 
         public Vector3D Normal;
         public float D;
+        public Box3D PlaneBounds;
 
-        public Plane(Vector3D normal, float d) {
+        public Plane(Vector3D normal, float d, Box3D bounds = null) {
+            PlaneBounds = bounds != null ? new Box3D(bounds) : new Box3D();
             Normal = new Vector3D(normal);
             D = d;
         }
 
         public Plane(Plane src) {
+            PlaneBounds = new Box3D(src.PlaneBounds);
             Normal = new Vector3D(src.Normal);
             D = 0;
         }
 
         public Plane() {
+            PlaneBounds = new Box3D();
             Normal = new Vector3D();
             D = 0;
         }
@@ -41,6 +46,18 @@ namespace CSG {
             outPlane.Normal.Copy(cross);
             outPlane.Normal.Normalize();
             outPlane.D = outPlane.Normal.Dot(a);
+
+            float padding = 0.15f;
+
+            outPlane.PlaneBounds.min.X = Mathf.Min(a.X, b.X, c.X) - padding;
+            outPlane.PlaneBounds.min.Y = Mathf.Min(a.Y, b.Y, c.Y) - padding;
+            outPlane.PlaneBounds.min.Z = Mathf.Min(a.Z, b.Z, c.Z) - padding;
+
+            outPlane.PlaneBounds.max.X = Mathf.Max(a.X, b.X, c.X) + padding;
+            outPlane.PlaneBounds.max.Y = Mathf.Max(a.Y, b.Y, c.Y) + padding;
+            outPlane.PlaneBounds.max.Z = Mathf.Max(a.Z, b.Z, c.Z) + padding;
+
         }
     }
+
 }

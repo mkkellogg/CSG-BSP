@@ -59,6 +59,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\CSG-BSP\Scripts\CSG\Box3D.cs" />
     <Compile Include="Assets\CSG-BSP\Scripts\CSG\BSPTree.cs" />
     <Compile Include="Assets\CSG-BSP\Scripts\CSG\Color4.cs" />
     <Compile Include="Assets\CSG-BSP\Scripts\CSG\Operations.cs" />
