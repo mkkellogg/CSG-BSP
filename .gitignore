@@ -11,6 +11,7 @@
 #Ignore unnecessary Unity folders
 Library/
 Temp/
+.vs/
 
 #Ignore imported packages
 
