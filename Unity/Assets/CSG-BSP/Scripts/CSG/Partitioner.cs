@@ -48,7 +48,21 @@ namespace CSG {
 
         public static Orientation SliceTriangle(Triangle triangle, Plane plane,
                                                 IList<Triangle> lessThan, IList<Triangle> greaterThan,
-                                                IList<Triangle> lessThanPlanar, IList<Triangle> greaterThanPlanar) {
+                                                IList<Triangle> lessThanPlanar, IList<Triangle> greaterThanPlanar, bool usePlaneBounds = false) {
+
+            if (usePlaneBounds) {
+                if (!plane.PlaneBounds.Intersects(triangle.OrientationPlane.PlaneBounds)) {
+                    if (plane.Normal.Dot(triangle.A.Position) >= plane.D) {
+                        greaterThan.Add(triangle);
+                        return Orientation.GreaterThan;
+                    }
+                    else {
+                        lessThan.Add(triangle);
+                        return Orientation.LessThan;
+                    }
+                }
+            }
+
             Orientation[] vertOrientations = new Orientation[3];
             Orientation triOrientation = Orientation.CoPlanar;
             int orientationsFound = 0;

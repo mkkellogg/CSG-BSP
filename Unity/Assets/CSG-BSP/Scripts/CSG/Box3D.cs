@@ -23,6 +23,7 @@ namespace CSG {
             this.min = new Vector3D(src.min);
             this.max = new Vector3D(src.max);
         }
+
         
         public void Reset() {
             this.min.Set(0, 0, 0);

@@ -18,8 +18,8 @@ namespace CSG {
         private Node root;
 
         /**
-		 * Add the triangles from @triangles into this BSPTree instance.
-		 */
+         * Add the triangles from @triangles into this BSPTree instance.
+         */
         public void AddTriangles(List<Triangle> triangles) {
             if (triangles == null || triangles.Count <= 0) return;
 
@@ -37,10 +37,10 @@ namespace CSG {
         }
 
         /**
-		 * Rescursive version of AddTriangles. This method partitions the triangles
-		 * in @triangles using @node's split plane, and then recursively calls itself
-		 * with the resulting greater-than and less-than lists.
-		 */
+         * Rescursive version of AddTriangles. This method partitions the triangles
+         * in @triangles using @node's split plane, and then recursively calls itself
+         * with the resulting greater-than and less-than lists.
+         */
         private void AddTriangles(Node node, FastLinkedList<Triangle> triangles) {
             if (triangles == null) return;
             if (node == null) return;
@@ -56,7 +56,7 @@ namespace CSG {
             // @node's split plane. co-planar triangles go into @nodeTriangles, triangles on the front
             // side go into @greaterThan, traingles on the back side go into @lessThan.
             triangles.Iterate((Triangle tri) => {
-                Partitioner.Orientation orient = Partitioner.SliceTriangle(tri, node.SplitPlane, lessThan, greaterThan, nodeTriangles, nodeTriangles);
+                Partitioner.Orientation orient = Partitioner.SliceTriangle(tri, node.SplitPlane, lessThan, greaterThan, nodeTriangles, nodeTriangles, false);
             });
 
             // release clear memory occupied by @triangles
@@ -78,13 +78,13 @@ namespace CSG {
         }
 
         /**
-		 * Remove the triangles in @triangles that are completely inside the geometry contained
-		 * by this BSPTree instance. Triangles that are partially inside the geometry are clipped
-		 * against it.
-		 * 
-		 * If @clipLessThan is false, the operation is reversed and triangles portions outside the geometry
-		 * of this BSPTree instance are removed.
-		 */
+         * Remove the triangles in @triangles that are completely inside the geometry contained
+         * by this BSPTree instance. Triangles that are partially inside the geometry are clipped
+         * against it.
+         * 
+         * If @clipLessThan is false, the operation is reversed and triangles portions outside the geometry
+         * of this BSPTree instance are removed.
+         */
         public void ClipOutTriangles(FastLinkedList<Triangle> triangles, bool clipLessThan = true, IList<Triangle> discarded = null) {
             // ensure the root node exists
             if (root == null) return;
@@ -94,20 +94,20 @@ namespace CSG {
         }
 
         /**
-		 * Recursive version of ClipOutTriangles. This method partitions the triangles
-		 * in @triangles using @node's split plane, and then recursively calls itself
-		 * with the resulting greater-than and less-than lists. If the recursion reaches a 
-		 * point where triangles in @triangles are on the back side of @node's split plane, 
-		 * but this instance of BSPTree contains no geometry on that side (node.LessThan == null),
-		 * then the triangles placed in @lessThan are deleted from @triangles. This removes
-		 * the portions of triangles in @triangles that lie inside the geometry of this BSPTree
-		 * instance.
-		 * 
-		 * If @clippLessThan is false, then we perform the reverse of the above oepration.
-		 * Triangles placed in @greaterThan than are removed when node.GreaterThan == null. 
-		 * In that case the portions of triangles in @triangles that lie outside the geometry 
-		 * of this BSPTree instance are removed.
-		 */
+         * Recursive version of ClipOutTriangles. This method partitions the triangles
+         * in @triangles using @node's split plane, and then recursively calls itself
+         * with the resulting greater-than and less-than lists. If the recursion reaches a 
+         * point where triangles in @triangles are on the back side of @node's split plane, 
+         * but this instance of BSPTree contains no geometry on that side (node.LessThan == null),
+         * then the triangles placed in @lessThan are deleted from @triangles. This removes
+         * the portions of triangles in @triangles that lie inside the geometry of this BSPTree
+         * instance.
+         * 
+         * If @clippLessThan is false, then we perform the reverse of the above oepration.
+         * Triangles placed in @greaterThan than are removed when node.GreaterThan == null. 
+         * In that case the portions of triangles in @triangles that lie outside the geometry 
+         * of this BSPTree instance are removed.
+         */
         private void ClipOutTriangles(Node node, FastLinkedList<Triangle> triangles, bool clipLessThan = true, IList<Triangle> discarded = null) {
             if (triangles == null || triangles.First == null) return;
             if (node == null) return;
@@ -120,13 +120,7 @@ namespace CSG {
             // on the back side go into @lessThan. co-planar triangles whose normal matches that of
             // @node's split plane go into @greaterThan; the rest go into @lessThan.
             triangles.Iterate((Triangle tri) => {
-                if (node.SplitPlane.PlaneBounds.Intersects(tri.OrientationPlane.PlaneBounds)) {
-                    Partitioner.Orientation orient = Partitioner.SliceTriangle(tri, node.SplitPlane, lessThan, greaterThan, lessThan, greaterThan);
-                }
-                else {
-                    if (node.SplitPlane.Normal.Dot(tri.A.Position) >= node.SplitPlane.D) greaterThan.AddLast(tri);
-                    else lessThan.AddLast(tri);
-                }
+                Partitioner.Orientation orient = Partitioner.SliceTriangle(tri, node.SplitPlane, lessThan, greaterThan, lessThan, greaterThan, true);
             });
 
             // release memory used by @triangles
@@ -158,26 +152,26 @@ namespace CSG {
         }
 
         /**
-		 * Remove the triangles in this BSPTree instance that are completely inside the 
-		 * geometry contained by @tree. Triangles that are partially inside the geometry 
-		 * are clipped against it.
-		 * 
-		 * If @clipLessThan is false, the operation is reversed and triangle portions 
-		 * outside the geometry of @tree instance are removed.
-		 */
+         * Remove the triangles in this BSPTree instance that are completely inside the 
+         * geometry contained by @tree. Triangles that are partially inside the geometry 
+         * are clipped against it.
+         * 
+         * If @clipLessThan is false, the operation is reversed and triangle portions 
+         * outside the geometry of @tree instance are removed.
+         */
         public void ClipByTree(BSPTree tree, bool clipLessThan = true, IList<Triangle> discarded = null) {
             ClipByTree(root, tree, clipLessThan, discarded);
         }
 
         /**
-		 * Recursive version of ClipByTree. This method recursively visits each node in this
-		 * BSPTree instance and clips the triangles of each based on the geometry of @tree.
-		 * By default it will remove the portions of triangles that are completely inside the 
-		 * geometry contained by @tree. 		 
-		 * 
-		 * If @clipLessThan is false, the operation is reversed and triangle portions 
-		 * outside the geometry of @tree instance are removed.
-		 */
+         * Recursive version of ClipByTree. This method recursively visits each node in this
+         * BSPTree instance and clips the triangles of each based on the geometry of @tree.
+         * By default it will remove the portions of triangles that are completely inside the 
+         * geometry contained by @tree. 		 
+         * 
+         * If @clipLessThan is false, the operation is reversed and triangle portions 
+         * outside the geometry of @tree instance are removed.
+         */
         private void ClipByTree(Node node, BSPTree tree, bool clipLessThan = true, IList<Triangle> discarded = null) {
             if (node == null) return;
 
@@ -187,9 +181,9 @@ namespace CSG {
         }
 
         /**
-		 * Return a list of all the triangles contained in the geometry of this
-		 * BSPTree instance.
-		 */
+         * Return a list of all the triangles contained in the geometry of this
+         * BSPTree instance.
+         */
         public List<Triangle> GetAllTriangles() {
             List<Triangle> allTriangles = new List<Triangle>();
             GetAllTriangles(root, allTriangles);
@@ -197,8 +191,8 @@ namespace CSG {
         }
 
         /**
-		 * Recursive component of GetAllTriangles().
-		 */
+         * Recursive component of GetAllTriangles().
+         */
         private void GetAllTriangles(Node node, List<Triangle> triangles) {
             if (node == null) return;
 
@@ -211,16 +205,16 @@ namespace CSG {
         }
 
         /**
-		 * Reverse the winding order and normal direction of all triangles
-		 * and split planes in this BSPTree instance.
-		 */
+         * Reverse the winding order and normal direction of all triangles
+         * and split planes in this BSPTree instance.
+         */
         public void Invert() {
             Invert(root);
         }
 
         /**
-		 * Recursively visit each node in this BSPTree instance and invert each.
-		 */
+         * Recursively visit each node in this BSPTree instance and invert each.
+         */
         private void Invert(Node node) {
             if (node == null) return;
 
@@ -230,8 +224,8 @@ namespace CSG {
         }
 
         /**
-		 * Produce a deep copy of this BSPTree instance.
-		 */
+         * Produce a deep copy of this BSPTree instance.
+         */
         public BSPTree Clone() {
             BSPTree copy = new BSPTree();
             copy.root = Clone(root);
@@ -239,8 +233,8 @@ namespace CSG {
         }
 
         /**
-		 * Produce a DEEP copy of @node (including all Node instances attached to it) recursively.
-		 */
+         * Produce a DEEP copy of @node (including all Node instances attached to it) recursively.
+         */
         private Node Clone(Node node) {
             if (node == null) return null;
             Node copy = node.Clone();
@@ -250,15 +244,15 @@ namespace CSG {
         }
 
         /**
-		 * Traverse the entire tree and call @action for each node.
-		 */
+         * Traverse the entire tree and call @action for each node.
+         */
         public void Traverse(System.Action<FastLinkedList<Triangle>, Plane> action) {
             Traverse(root, action);
         }
 
         /**
-		 * Recursive Traverse() - Traverse the entire tree and call @action for each node.
-		 */
+         * Recursive Traverse() - Traverse the entire tree and call @action for each node.
+         */
         private void Traverse(Node node, System.Action<FastLinkedList<Triangle>, Plane> action) {
             if (node == null) return;
 
@@ -269,8 +263,8 @@ namespace CSG {
         }
 
         /**
-		 * Node represents a single of a BSPTree.
-		 */
+         * Node represents a single of a BSPTree.
+         */
         private class Node {
             // the dividing plane for this node
             public Plane SplitPlane;
@@ -296,9 +290,9 @@ namespace CSG {
             }
 
             /** 
-			* Produce a SHALLOW copy of this Node instance (the children of
-			* this instance are NOT cloned).
-			*/
+             * Produce a SHALLOW copy of this Node instance (the children of
+             * this instance are NOT cloned).
+             */
             public Node Clone() {
                 Node copy = new Node();
 
@@ -315,8 +309,8 @@ namespace CSG {
             }
 
             /**
-			 * Invert this Node instances's split plane and triangles.
-			 */
+             * Invert this Node instances's split plane and triangles.
+             */
             public void Invert() {
                 FastLinkedList<Triangle>.Node current = triangles.First;
                 while (current != null) {
@@ -332,8 +326,8 @@ namespace CSG {
             }
 
             /**
-			 * Get a reference to the list that contains this node's triangles.
-			 */
+             * Get a reference to the list that contains this node's triangles.
+             */
             public FastLinkedList<Triangle> GetTriangleList() {
                 return triangles;
             }

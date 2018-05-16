@@ -16,8 +16,8 @@ using System.Collections.Generic;
 namespace CSG {
     public class CSGUtil {
         /**
-		 * Create a Mesh instance from @tree.
-		 */
+         * Create a Mesh instance from @tree.
+         */
         public static Mesh FromBSPtree(BSPTree tree) {
             if (tree == null) return null;
             return FromList(tree.GetAllTriangles());
@@ -47,9 +47,9 @@ namespace CSG {
         }
 
         /**
-		 * Pull vertex attributes from each vertex in each triangle in @allTriangles, and copy
-		 * them into the appropriate array parameter.
-		 */
+         * Pull vertex attributes from each vertex in each triangle in @allTriangles, and copy
+         * them into the appropriate array parameter.
+         */
         private static void GetVertexAttributes(List<Triangle> allTriangles, out Vector3[] positions, out Vector2[] uvs1, out int[] triangles) {
             positions = null;
             uvs1 = null;
@@ -100,17 +100,17 @@ namespace CSG {
         }
 
         /**
-		 * Create a new BSPTree instance from @mesh using the Identity matrix
-		 * to transform all vertices, normals, and tangents.
-		 */
+         * Create a new BSPTree instance from @mesh using the Identity matrix
+         * to transform all vertices, normals, and tangents.
+         */
         public static BSPTree FromMesh(Mesh mesh) {
             return FromMesh(mesh, new Matrix4x4());
         }
 
         /**
-		 * Create a new BSPTree instance from @mesh using @transform
-		 * to transform all vertices, normals, and tangents.
-		 */
+         * Create a new BSPTree instance from @mesh using @transform
+         * to transform all vertices, normals, and tangents.
+         */
         public static BSPTree FromMesh(Mesh mesh, Matrix4x4 transform) {
             BSPTree tree = new BSPTree();
 
@@ -135,8 +135,8 @@ namespace CSG {
         }
 
         /**
-		 * Transform the relevant attributes of @vertex by @transform.
-		 */
+         * Transform the relevant attributes of @vertex by @transform.
+         */
         public static Vertex TransformVertex(Vertex vertex, Matrix4x4 transform) {
             // transform vertex position
             Vector4 uVector = new Vector4(vertex.Position.X, vertex.Position.Y, vertex.Position.Z, 1);
@@ -157,8 +157,8 @@ namespace CSG {
         }
 
         /**
-		 * Create a list of Triangle instances from the vertex data in @mesh.
-		 */
+         * Create a list of Triangle instances from the vertex data in @mesh.
+         */
         public static List<Triangle> GetMeshTriangles(Mesh mesh) {
             List<Triangle> triangles = new List<Triangle>();
 
@@ -170,10 +170,10 @@ namespace CSG {
         }
 
         /**
-		 * 
-		 * Create a list of Triangle instances from the vertex data in the sub-mesh
-		 * of @mesh specified by @index, and place them in @dest.
-		 */
+         * 
+         * Create a list of Triangle instances from the vertex data in the sub-mesh
+         * of @mesh specified by @index, and place them in @dest.
+         */
         private static void AddSubMeshTriangles(Mesh mesh, int subMeshIndex, List<Triangle> dest) {
             int[] meshIndices = mesh.GetTriangles(subMeshIndex);
             Vector3[] meshVertices = mesh.vertices;
@@ -188,10 +188,10 @@ namespace CSG {
         }
 
         /**
-		 * Given @meshIndices, the array of vertex indices for @mesh, construct a triangle 
-		 * with all relevant vertex attribute data starting at the vertex pointed to by 
-		 * @index, using @index, @index+1, and @index+2 as the triangle's vertices.
-		 */
+         * Given @meshIndices, the array of vertex indices for @mesh, construct a triangle 
+         * with all relevant vertex attribute data starting at the vertex pointed to by 
+         * @index, using @index, @index+1, and @index+2 as the triangle's vertices.
+         */
         private static Triangle ConvertMeshTriangle(Vector3[] meshVertices, Vector3[] meshNormals, Vector4[] meshTangents, Vector2[] meshUVs, int[] meshIndices, int index) {
             Vector3 v1 = meshVertices[meshIndices[index]];
             Vector3 v2 = meshVertices[meshIndices[index + 1]];
