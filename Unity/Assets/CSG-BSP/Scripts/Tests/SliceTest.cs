@@ -63,7 +63,7 @@ namespace CSG {
             slicedHalf1Filter.mesh = slicedHalf1Mesh;
             Vector3 translateVector = ResultPosition.position - Anchor.position;
             slicedHalf1Object.transform.Translate(translateVector);
-            slicedHalf1Object.transform.Translate(-0.5f, 0, 0);
+            slicedHalf1Object.transform.Translate(0.5f, 0, 0);
 
             Mesh slicedHalf2Mesh = CSG.CSGUtil.FromList(slicedHalf2triangles);
             GameObject slicedHalf2Object = new GameObject();
@@ -73,7 +73,7 @@ namespace CSG {
             slicedHalf2Filter.mesh = slicedHalf2Mesh;
             translateVector = ResultPosition.position - Anchor.position;
             slicedHalf2Object.transform.Translate(translateVector);
-            slicedHalf2Object.transform.Translate(0.5f, 0, 0);
+            slicedHalf2Object.transform.Translate(-0.5f, 0, 0);
         }
 
         void Update() {

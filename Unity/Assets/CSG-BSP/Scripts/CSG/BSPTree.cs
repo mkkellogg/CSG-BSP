@@ -56,7 +56,7 @@ namespace CSG {
             // @node's split plane. co-planar triangles go into @nodeTriangles, triangles on the front
             // side go into @greaterThan, traingles on the back side go into @lessThan.
             triangles.Iterate((Triangle tri) => {
-                Partitioner.Orientation orient = Partitioner.SliceTriangle(tri, node.SplitPlane, lessThan, greaterThan, nodeTriangles, nodeTriangles, false);
+                Partitioner.Orientation orient = Partitioner.SliceTriangle(tri, node.SplitPlane, lessThan, greaterThan, nodeTriangles, nodeTriangles);
             });
 
             // release clear memory occupied by @triangles

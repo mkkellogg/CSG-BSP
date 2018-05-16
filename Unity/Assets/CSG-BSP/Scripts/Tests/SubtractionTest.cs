@@ -67,6 +67,7 @@ namespace CSG {
             subtractedFilter.mesh = subtractedMesh;
             Vector3 translateVector = ResultPosition.position - Anchor.position;
             subtractedObject.transform.Translate(translateVector);
+
         }
 
         void Update() {
