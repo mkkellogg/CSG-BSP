@@ -9,9 +9,9 @@
 # Unity ignore
 #==============================================
 #Ignore unnecessary Unity folders
-Library/
-Temp/
-.vs/
+Unity/Library/
+Unity/Temp/
+Unity/.vs/
 
 #Ignore imported packages
 

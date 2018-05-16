@@ -31,12 +31,13 @@ namespace CSG {
         }
 
         public bool Intersects(Box3D box) {
-            if (box.max.X < this.min.X) return false;
+            if (this.max.X < box.min.X) return false;
             if (this.min.X > box.max.X) return false;
-            if (box.max.Y < this.min.Y) return false;
+            if (this.max.Y < box.min.Y) return false;
             if (this.min.Y > box.max.Y) return false;
-            if (box.max.Z < this.min.Z) return false;
+            if (this.max.Z < box.min.Z) return false;
             if (this.min.Z > box.max.Z) return false;
+
             return true;
         }
 
